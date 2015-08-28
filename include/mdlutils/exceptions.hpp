@@ -6,7 +6,7 @@
 #define MDLUTILS_EXCEPTION_HPP
 
 #include <mdlutils/exceptions/base_exception.hpp>
-#include <mdlutils/exceptions/invalid_argument_exception.hpp.hpp>
+#include <mdlutils/exceptions/invalid_argument_exception.hpp>
 #include <mdlutils/exceptions/not_implemented_exception.hpp>
 
 #endif //MDLUTILS_EXCEPTION_HPP
