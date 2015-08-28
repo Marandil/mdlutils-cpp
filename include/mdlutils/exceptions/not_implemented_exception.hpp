@@ -2,8 +2,10 @@
 // Created by marandil on 17.08.15.
 //
 
-#ifndef MDLUTILS_CPP_NOT_IMPLEMENTED_EXCEPTION_HPP
-#define MDLUTILS_CPP_NOT_IMPLEMENTED_EXCEPTION_HPP
+#ifndef MDLUTILS_EXCEPTIONS_NOT_IMPLEMENTED_EXCEPTION_HPP
+#define MDLUTILS_EXCEPTIONS_NOT_IMPLEMENTED_EXCEPTION_HPP
+
+#include <string>
 
 #include <mdlutils/typedefs.hpp>
 #include <mdlutils/exceptions/base_exception.hpp>
@@ -17,6 +19,7 @@ namespace mdl
                 base_exception(functionName, file, line) { }
 
     protected:
+        /// @inherit
         virtual const std::string &getTag() const
         {
             const static std::string tag = "NotImplementedException";
@@ -25,4 +28,4 @@ namespace mdl
     };
 }
 
-#endif //MDLUTILS_CPP_NOT_IMPLEMENTED_EXCEPTION_HPP
+#endif //MDLUTILS_EXCEPTIONS_NOT_IMPLEMENTED_EXCEPTION_HPP
