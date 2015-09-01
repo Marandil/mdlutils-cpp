@@ -43,7 +43,7 @@ TEST_F(ExceptionsTest, BaseExceptionLineNo)
     int line = 0;
     try
     {
-        line = __LINE__;
+        line = __LINE__ + 1;
         mdl_throw(mdl::base_exception, "test");
     }
     catch (mdl::base_exception &e)
@@ -76,8 +76,8 @@ TEST_F(ExceptionsTest, BaseExceptionWhat)
     std::string filename;
     try
     {
-        line = __LINE__;
         filename = __FILE__;
+        line = __LINE__ + 1;
         mdl_throw(mdl::base_exception, "test");
     }
     catch (mdl::base_exception &e)
@@ -95,8 +95,8 @@ TEST_F(ExceptionsTest, NotImplementedExceptionWhat)
     std::string filename;
     try
     {
-        line = __LINE__;
         filename = __FILE__;
+        line = __LINE__ + 1;
         mdl_throw(mdl::not_implemented_exception, "test");
     }
     catch (mdl::base_exception &e)
