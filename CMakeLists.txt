@@ -3,7 +3,27 @@ project(mdlutils_cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-include_directories(include)
-set(SOURCE_FILES src/tests/main.cpp)
+# Google test
+add_subdirectory(gtest)
+include_directories(gtest/googletest-master/googletest/include) # apparently, the include directory has to be reset at this point
 
-add_executable(simple_tests ${SOURCE_FILES})
+include_directories(include)
+
+set(LIB_SOURCE_FILES
+        src/libs/timeit.cpp
+)
+
+set(TEST_SOURCE_FILES
+        src/tests/main.cpp
+)
+
+set(GTEST_SOURCE_FILES
+        src/gtests/exceptions-tests.cpp
+)
+
+add_library(mdlutils ${LIB_SOURCE_FILES})
+
+add_executable(simple_tests ${TEST_SOURCE_FILES})
+add_executable(google_tests ${GTEST_SOURCE_FILES})
+target_link_libraries(simple_tests mdlutils)
+target_link_libraries(google_tests mdlutils gtest)
