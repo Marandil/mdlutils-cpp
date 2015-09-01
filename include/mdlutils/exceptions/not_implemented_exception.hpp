@@ -16,7 +16,7 @@ namespace mdl
     {
     public:
         not_implemented_exception(const std::string &functionName, const std::string &file, int line) :
-                base_exception(functionName, file, line) { }
+                base_exception(functionName, file, line) { commit_message(); }
 
     protected:
         /// @inherit
