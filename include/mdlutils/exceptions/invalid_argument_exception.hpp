@@ -18,11 +18,11 @@ namespace mdl
         invalid_argument_exception(const std::string &customErrorMessage, const std::string &argName,
                                    const std::string &printableValue, const std::string &file, int line) :
                 base_exception(customErrorMessage + " (argument " + argName + " with value " + printableValue + ")",
-                               file, line) { }
+                               file, line) { commit_message(); }
 
         invalid_argument_exception(const std::string &argName, const std::string &printableValue,
                                    const std::string &file, int line) :
-                base_exception("Argument " + argName + " with value " + printableValue, file, line) { }
+                base_exception("Argument " + argName + " with value " + printableValue, file, line) { commit_message(); }
 
     protected:
         /// @inherit

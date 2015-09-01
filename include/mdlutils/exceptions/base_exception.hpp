@@ -31,7 +31,7 @@ namespace mdl
          * @line line at which exception has occurred.
          */
         base_exception(const std::string &file, int line)
-                : message(""), file(file), line(line) { }
+                : message(""), file(file), line(line) { commit_message(); }
 
         /* Constructs exception instance.
          * @err exception message.
@@ -39,11 +39,20 @@ namespace mdl
          * @line line at which exception has occurred.
          */
         base_exception(const std::string &err, const std::string &file, int line)
-                : message(err), file(file), line(line) { }
+                : message(err), file(file), line(line) { commit_message(); }
 
         /* Destructor that cannot throw exception (required by some compilers).
          */
         virtual ~base_exception() throw() { }
+
+        /** Commits current tag, message, line and file values, generating exception message for what
+         *
+         * Always call it in the deriving class's constructors to ensure correct tags.
+         */
+        virtual void commit_message() throw()
+        {
+            what_buffer = (getTag() + ": " + message + "\n\tat " + std::to_string(line) + " in " + file);
+        }
 
         /* Function called when this exception is thrown.
          *
@@ -51,10 +60,15 @@ namespace mdl
          */
         virtual const char *what() const throw()
         {
-            return (getTag() + ": " + message + "\n\tat " + std::to_string(line) + " in " + file).c_str();
+            return what_buffer.c_str();
         }
 
+        virtual int throw_line() const { return line; }
+        virtual std::string throw_file() const { return file; }
+
     protected:
+        /** what() const char* buffer, makes sure it's c_str is not freed between the calls */
+        std::string what_buffer;
         /** Exception message. */
         std::string message;
         /** Name of the file in which exception has occurred. */
@@ -66,7 +80,11 @@ namespace mdl
          *
          * @return Exception class tag.
          */
-        virtual const std::string &getTag() const = 0;
+        virtual const std::string &getTag() const
+        {
+            const static std::string tag = "BaseException";
+            return tag;
+        }
     };
 }
 #endif //MDLUTILS_EXCEPTIONS_BASE_EXCEPTION_HPP
