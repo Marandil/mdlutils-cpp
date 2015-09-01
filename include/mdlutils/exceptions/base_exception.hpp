@@ -51,7 +51,7 @@ namespace mdl
          */
         virtual void commit_message() throw()
         {
-            what_buffer = (getTag() + ": " + message + "\n\tat " + std::to_string(line) + " in " + file);
+            what_buffer = (tag() + ": " + message + "\n\tat " + std::to_string(line) + " in " + file);
         }
 
         /* Function called when this exception is thrown.
@@ -80,7 +80,7 @@ namespace mdl
          *
          * @return Exception class tag.
          */
-        virtual const std::string &getTag() const
+        virtual const std::string &tag() const
         {
             const static std::string tag = "BaseException";
             return tag;

@@ -20,7 +20,7 @@ namespace mdl
 
     protected:
         /// @inherit
-        virtual const std::string &getTag() const
+        virtual const std::string &tag() const
         {
             const static std::string tag = "NotImplementedException";
             return tag;
