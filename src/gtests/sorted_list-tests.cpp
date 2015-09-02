@@ -1,19 +1,20 @@
 //
-// Created by marandil on 01.09.15.
+// Created by Marandil on 01.09.15.
 //
+
+#include <algorithm>
 
 #include <gtest/gtest.h>
 
 #include <mdlutils/types/sorted_list.hpp>
 #include <mdlutils/exceptions/base_exception.hpp>
 
-#include <algorithm>
 
 class SortedListTest : public ::testing::Test
 {
 protected:
     using string=std::string;
-    int size = 10000;
+    size_t size = 10;
 
     std::vector<int> intdata;
     std::vector<int> intsort;
@@ -128,6 +129,170 @@ void test_range_insertion(U &data, U &sort, V &list)
     EXPECT_EQ(it2, end2);
 }
 
+template<typename T, typename U, typename V>
+void test_easy_erase(U &data, U &sort, V &list)
+{
+    // fill the list
+    list.insert(data.begin(), data.end());
+    size_t s = data.size();
+    EXPECT_EQ(s, list.size());
+
+    for (T i : data)
+    {
+        list.erase(i);
+        s--;
+        EXPECT_EQ(s, list.size());
+    }
+    auto begin = list.begin(), end = list.end();
+
+    EXPECT_EQ(begin, end);
+}
+
+template<size_t n, typename T, typename U, typename V>
+void test_multi_erase(U &data, U &sort, V &list)
+{
+    // fill the list n times
+    for (int i = 0; i < n; ++i)
+        list.insert(data.begin(), data.end());
+    size_t s = data.size() * n;
+    EXPECT_EQ(s, list.size());
+
+    for (T i : data)
+    {
+        EXPECT_EQ(n, list.count(i));
+        list.erase(i);
+        s -= n;
+        EXPECT_EQ(s, list.size());
+        EXPECT_EQ(0, list.count(i));
+    }
+    auto begin = list.begin(), end = list.end();
+
+    EXPECT_EQ(begin, end);
+}
+
+template<size_t n, typename T, typename U, typename V>
+void test_bounds_erase(U &data, U &sort, V &list)
+{
+    // fill the list n times
+    for (int i = 0; i < n; ++i)
+        list.insert(data.begin(), data.end());
+    size_t s = data.size() * n;
+    EXPECT_EQ(s, list.size());
+
+    for (T i : data)
+    {
+        EXPECT_EQ(n, list.count(i));
+        auto lb = list.lower_bound(i),
+                ub = list.upper_bound(i);
+        list.erase(lb, ub);
+        s -= n;
+        EXPECT_EQ(s, list.size());
+        EXPECT_EQ(0, list.count(i));
+    }
+    auto begin = list.begin(), end = list.end();
+
+    EXPECT_EQ(begin, end);
+}
+
+template<size_t n, typename T, typename U, typename V>
+void test_bounds2_erase(U &data, U &sort, V &list)
+{
+    // fill the list n times
+    for (int i = 0; i < n; ++i)
+        list.insert(data.begin(), data.end());
+    size_t s = data.size() * n;
+    EXPECT_EQ(s, list.size());
+
+    for (T i : data)
+    {
+        EXPECT_EQ(n, list.count(i));
+        auto pair = list.equal_range(i);
+        list.erase(pair.first, pair.second);
+        s -= n;
+        EXPECT_EQ(s, list.size());
+        EXPECT_EQ(0, list.count(i));
+    }
+    auto begin = list.begin(), end = list.end();
+
+    EXPECT_EQ(begin, end);
+}
+
+template<typename T, typename U, typename V>
+void test_easy_find(U &data, U &sort, V &list)
+{
+    // fill the list
+    list.insert(data.begin(), data.end());
+
+    for (T i : data)
+    {
+        auto it = list.find(i);
+        EXPECT_EQ(i, *it);
+    }
+}
+
+template<typename T, typename U, typename V>
+void test_easy_finderase(U &data, U &sort, V &list)
+{
+    // fill the list
+    list.insert(data.begin(), data.end());
+    size_t s = data.size();
+    EXPECT_EQ(s, list.size());
+
+    for (T i : data)
+    {
+        auto it = list.find(i);
+        EXPECT_EQ(i, *it);
+        list.erase(it);
+        s--;
+        EXPECT_EQ(s, list.size());
+    }
+    auto begin = list.begin(), end = list.end();
+
+    EXPECT_EQ(begin, end);
+}
+
+template<typename T, typename U, typename V>
+void test_range_erase(U &data, U &sort, V &list)
+{
+    list.insert(data.begin(), data.end());
+    size_t s = data.size();
+    EXPECT_EQ(s, list.size());
+
+    auto comp = list.key_comp();
+
+    T rvb = data.front();
+    T rve = data.back();
+    if (!comp(rvb, rve))
+        std::swap(rvb, rve);
+
+    auto r_begin = list.find(rvb);
+    auto r_end = list.find(rve);
+
+    // erase the range
+    list.erase(r_begin, r_end);
+    auto end = list.end();
+
+    for (T i : data)
+    {
+        auto it = list.find(i);
+        if (comp(i, rvb))
+        {
+            EXPECT_EQ(i, *it);
+            EXPECT_EQ(1, list.count(i));
+        }
+        else if (comp(i, rve))
+        {
+            EXPECT_EQ(it, end);
+            EXPECT_EQ(0, list.count(i));
+        }
+        else
+        {
+            EXPECT_EQ(i, *it);
+            EXPECT_EQ(1, list.count(i));
+        }
+    }
+}
+
 TEST_F(SortedListTest, SortedListIntEasyInsertion)
 {
     test_easy_insertion<int>(intdata, intsort, intlist);
@@ -190,4 +355,137 @@ TEST_F(SortedListTest, SortedListStringRangeInsertion)
     test_range_insertion<string>(stringdata, stringsortinv, stringlistinv);
     test_range_insertion<string>(stringdata, stringsortbizzare, stringlistbizzare);
 }
+
+TEST_F(SortedListTest, SortedListIntEasyErase)
+{
+    test_easy_erase<int>(intdata, intsort, intlist);
+}
+
+TEST_F(SortedListTest, SortedListIntMultiErase)
+{
+    test_multi_erase<1, int>(intdata, intsort, intlist);
+    test_multi_erase<10, int>(intdata, intsort, intlist);
+    test_multi_erase<100, int>(intdata, intsort, intlist);
+    test_multi_erase<1000, int>(intdata, intsort, intlist);
+}
+
+TEST_F(SortedListTest, SortedListIntBoundsErase)
+{
+    test_bounds_erase<1, int>(intdata, intsort, intlist);
+    test_bounds_erase<10, int>(intdata, intsort, intlist);
+    test_bounds_erase<100, int>(intdata, intsort, intlist);
+    test_bounds_erase<1000, int>(intdata, intsort, intlist);
+}
+
+TEST_F(SortedListTest, SortedListIntBounds2Erase)
+{
+    test_bounds2_erase<1, int>(intdata, intsort, intlist);
+    test_bounds2_erase<10, int>(intdata, intsort, intlist);
+    test_bounds2_erase<100, int>(intdata, intsort, intlist);
+    test_bounds2_erase<1000, int>(intdata, intsort, intlist);
+}
+
+TEST_F(SortedListTest, SortedListIntEasyFind)
+{
+    test_easy_find<int>(intdata, intsort, intlist);
+}
+
+TEST_F(SortedListTest, SortedListIntEasyFindErase)
+{
+    test_easy_finderase<int>(intdata, intsort, intlist);
+}
+
+TEST_F(SortedListTest, SortedListIntRangeErase)
+{
+    test_range_erase<int>(intdata, intsort, intlist);
+}
+
+TEST_F(SortedListTest, SortedListFloatEasyErase)
+{
+    test_easy_erase<float>(floatdata, floatsort, floatlist);
+}
+
+TEST_F(SortedListTest, SortedListFloatMultiErase)
+{
+    test_multi_erase<1, float>(floatdata, floatsort, floatlist);
+    test_multi_erase<10, float>(floatdata, floatsort, floatlist);
+    test_multi_erase<100, float>(floatdata, floatsort, floatlist);
+    test_multi_erase<1000, float>(floatdata, floatsort, floatlist);
+}
+
+TEST_F(SortedListTest, SortedListFloatBoundsErase)
+{
+    test_bounds_erase<1, float>(floatdata, floatsort, floatlist);
+    test_bounds_erase<10, float>(floatdata, floatsort, floatlist);
+    test_bounds_erase<100, float>(floatdata, floatsort, floatlist);
+    test_bounds_erase<1000, float>(floatdata, floatsort, floatlist);
+}
+
+TEST_F(SortedListTest, SortedListFloatBounds2Erase)
+{
+    test_bounds2_erase<1, float>(floatdata, floatsort, floatlist);
+    test_bounds2_erase<10, float>(floatdata, floatsort, floatlist);
+    test_bounds2_erase<100, float>(floatdata, floatsort, floatlist);
+    test_bounds2_erase<1000, float>(floatdata, floatsort, floatlist);
+}
+
+TEST_F(SortedListTest, SortedListFloatEasyFind)
+{
+    test_easy_find<float>(floatdata, floatsort, floatlist);
+}
+
+TEST_F(SortedListTest, SortedListFloatEasyFindErase)
+{
+    test_easy_finderase<float>(floatdata, floatsort, floatlist);
+}
+
+TEST_F(SortedListTest, SortedListFloatRangeErase)
+{
+    test_range_erase<float>(floatdata, floatsort, floatlist);
+}
+
+TEST_F(SortedListTest, SortedListStringEasyErase)
+{
+    test_easy_erase<string>(stringdata, stringsort, stringlist);
+}
+
+TEST_F(SortedListTest, SortedListStringMultiErase)
+{
+    test_multi_erase<1, string>(stringdata, stringsort, stringlist);
+    test_multi_erase<10, string>(stringdata, stringsort, stringlist);
+    test_multi_erase<100, string>(stringdata, stringsort, stringlist);
+    test_multi_erase<1000, string>(stringdata, stringsort, stringlist);
+}
+
+TEST_F(SortedListTest, SortedListStringBoundsErase)
+{
+    test_bounds_erase<1, string>(stringdata, stringsort, stringlist);
+    test_bounds_erase<10, string>(stringdata, stringsort, stringlist);
+    test_bounds_erase<100, string>(stringdata, stringsort, stringlist);
+    test_bounds_erase<1000, string>(stringdata, stringsort, stringlist);
+}
+
+TEST_F(SortedListTest, SortedListStringBounds2Erase)
+{
+    test_bounds2_erase<1, string>(stringdata, stringsort, stringlist);
+    test_bounds2_erase<10, string>(stringdata, stringsort, stringlist);
+    test_bounds2_erase<100, string>(stringdata, stringsort, stringlist);
+    test_bounds2_erase<1000, string>(stringdata, stringsort, stringlist);
+}
+
+TEST_F(SortedListTest, SortedListStringEasyFind)
+{
+    test_easy_find<string>(stringdata, stringsort, stringlist);
+}
+
+TEST_F(SortedListTest, SortedListStringEasyFindErase)
+{
+    test_easy_finderase<string>(stringdata, stringsort, stringlist);
+}
+
+TEST_F(SortedListTest, SortedListStringRangeErase)
+{
+    test_range_erase<string>(stringdata, stringsort, stringlist);
+}
+
 
