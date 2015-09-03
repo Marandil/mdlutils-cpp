@@ -293,75 +293,75 @@ void test_range_erase(U &data, U &sort, V &list)
     }
 }
 
-TEST_F(SortedListTest, SortedListIntEasyInsertion)
+TEST_F(SortedListTest, IntEasyInsertion)
 {
     test_easy_insertion<int>(intdata, intsort, intlist);
     test_easy_insertion<int>(intdata, intsortinv, intlistinv);
     test_easy_insertion<int>(intdata, intsortbizzare, intlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListFloatEasyInsertion)
+TEST_F(SortedListTest, FloatEasyInsertion)
 {
     test_easy_insertion<float>(floatdata, floatsort, floatlist);
     test_easy_insertion<float>(floatdata, floatsortinv, floatlistinv);
     test_easy_insertion<float>(floatdata, floatsortbizzare, floatlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListStringEasyInsertion)
+TEST_F(SortedListTest, StringEasyInsertion)
 {
     test_easy_insertion<string>(stringdata, stringsort, stringlist);
     test_easy_insertion<string>(stringdata, stringsortinv, stringlistinv);
     test_easy_insertion<string>(stringdata, stringsortbizzare, stringlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListIntHintInsertion)
+TEST_F(SortedListTest, IntHintInsertion)
 {
     test_hint_insertion<int>(intdata, intsort, intlist);
     test_hint_insertion<int>(intdata, intsortinv, intlistinv);
     test_hint_insertion<int>(intdata, intsortbizzare, intlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListFloatHintInsertion)
+TEST_F(SortedListTest, FloatHintInsertion)
 {
     test_hint_insertion<float>(floatdata, floatsort, floatlist);
     test_hint_insertion<float>(floatdata, floatsortinv, floatlistinv);
     test_hint_insertion<float>(floatdata, floatsortbizzare, floatlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListStringHintInsertion)
+TEST_F(SortedListTest, StringHintInsertion)
 {
     test_hint_insertion<string>(stringdata, stringsort, stringlist);
     test_hint_insertion<string>(stringdata, stringsortinv, stringlistinv);
     test_hint_insertion<string>(stringdata, stringsortbizzare, stringlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListIntRangeInsertion)
+TEST_F(SortedListTest, IntRangeInsertion)
 {
     test_range_insertion<int>(intdata, intsort, intlist);
     test_range_insertion<int>(intdata, intsortinv, intlistinv);
     test_range_insertion<int>(intdata, intsortbizzare, intlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListFloatRangeInsertion)
+TEST_F(SortedListTest, FloatRangeInsertion)
 {
     test_range_insertion<float>(floatdata, floatsort, floatlist);
     test_range_insertion<float>(floatdata, floatsortinv, floatlistinv);
     test_range_insertion<float>(floatdata, floatsortbizzare, floatlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListStringRangeInsertion)
+TEST_F(SortedListTest, StringRangeInsertion)
 {
     test_range_insertion<string>(stringdata, stringsort, stringlist);
     test_range_insertion<string>(stringdata, stringsortinv, stringlistinv);
     test_range_insertion<string>(stringdata, stringsortbizzare, stringlistbizzare);
 }
 
-TEST_F(SortedListTest, SortedListIntEasyErase)
+TEST_F(SortedListTest, IntEasyErase)
 {
     test_easy_erase<int>(intdata, intsort, intlist);
 }
 
-TEST_F(SortedListTest, SortedListIntMultiErase)
+TEST_F(SortedListTest, IntMultiErase)
 {
     test_multi_erase<1, int>(intdata, intsort, intlist);
     test_multi_erase<10, int>(intdata, intsort, intlist);
@@ -369,7 +369,7 @@ TEST_F(SortedListTest, SortedListIntMultiErase)
     test_multi_erase<1000, int>(intdata, intsort, intlist);
 }
 
-TEST_F(SortedListTest, SortedListIntBoundsErase)
+TEST_F(SortedListTest, IntBoundsErase)
 {
     test_bounds_erase<1, int>(intdata, intsort, intlist);
     test_bounds_erase<10, int>(intdata, intsort, intlist);
@@ -377,7 +377,7 @@ TEST_F(SortedListTest, SortedListIntBoundsErase)
     test_bounds_erase<1000, int>(intdata, intsort, intlist);
 }
 
-TEST_F(SortedListTest, SortedListIntBounds2Erase)
+TEST_F(SortedListTest, IntBounds2Erase)
 {
     test_bounds2_erase<1, int>(intdata, intsort, intlist);
     test_bounds2_erase<10, int>(intdata, intsort, intlist);
@@ -385,27 +385,27 @@ TEST_F(SortedListTest, SortedListIntBounds2Erase)
     test_bounds2_erase<1000, int>(intdata, intsort, intlist);
 }
 
-TEST_F(SortedListTest, SortedListIntEasyFind)
+TEST_F(SortedListTest, IntEasyFind)
 {
     test_easy_find<int>(intdata, intsort, intlist);
 }
 
-TEST_F(SortedListTest, SortedListIntEasyFindErase)
+TEST_F(SortedListTest, IntEasyFindErase)
 {
     test_easy_finderase<int>(intdata, intsort, intlist);
 }
 
-TEST_F(SortedListTest, SortedListIntRangeErase)
+TEST_F(SortedListTest, IntRangeErase)
 {
     test_range_erase<int>(intdata, intsort, intlist);
 }
 
-TEST_F(SortedListTest, SortedListFloatEasyErase)
+TEST_F(SortedListTest, FloatEasyErase)
 {
     test_easy_erase<float>(floatdata, floatsort, floatlist);
 }
 
-TEST_F(SortedListTest, SortedListFloatMultiErase)
+TEST_F(SortedListTest, FloatMultiErase)
 {
     test_multi_erase<1, float>(floatdata, floatsort, floatlist);
     test_multi_erase<10, float>(floatdata, floatsort, floatlist);
@@ -413,7 +413,7 @@ TEST_F(SortedListTest, SortedListFloatMultiErase)
     test_multi_erase<1000, float>(floatdata, floatsort, floatlist);
 }
 
-TEST_F(SortedListTest, SortedListFloatBoundsErase)
+TEST_F(SortedListTest, FloatBoundsErase)
 {
     test_bounds_erase<1, float>(floatdata, floatsort, floatlist);
     test_bounds_erase<10, float>(floatdata, floatsort, floatlist);
@@ -421,7 +421,7 @@ TEST_F(SortedListTest, SortedListFloatBoundsErase)
     test_bounds_erase<1000, float>(floatdata, floatsort, floatlist);
 }
 
-TEST_F(SortedListTest, SortedListFloatBounds2Erase)
+TEST_F(SortedListTest, FloatBounds2Erase)
 {
     test_bounds2_erase<1, float>(floatdata, floatsort, floatlist);
     test_bounds2_erase<10, float>(floatdata, floatsort, floatlist);
@@ -429,27 +429,27 @@ TEST_F(SortedListTest, SortedListFloatBounds2Erase)
     test_bounds2_erase<1000, float>(floatdata, floatsort, floatlist);
 }
 
-TEST_F(SortedListTest, SortedListFloatEasyFind)
+TEST_F(SortedListTest, FloatEasyFind)
 {
     test_easy_find<float>(floatdata, floatsort, floatlist);
 }
 
-TEST_F(SortedListTest, SortedListFloatEasyFindErase)
+TEST_F(SortedListTest, FloatEasyFindErase)
 {
     test_easy_finderase<float>(floatdata, floatsort, floatlist);
 }
 
-TEST_F(SortedListTest, SortedListFloatRangeErase)
+TEST_F(SortedListTest, FloatRangeErase)
 {
     test_range_erase<float>(floatdata, floatsort, floatlist);
 }
 
-TEST_F(SortedListTest, SortedListStringEasyErase)
+TEST_F(SortedListTest, StringEasyErase)
 {
     test_easy_erase<string>(stringdata, stringsort, stringlist);
 }
 
-TEST_F(SortedListTest, SortedListStringMultiErase)
+TEST_F(SortedListTest, StringMultiErase)
 {
     test_multi_erase<1, string>(stringdata, stringsort, stringlist);
     test_multi_erase<10, string>(stringdata, stringsort, stringlist);
@@ -457,7 +457,7 @@ TEST_F(SortedListTest, SortedListStringMultiErase)
     test_multi_erase<1000, string>(stringdata, stringsort, stringlist);
 }
 
-TEST_F(SortedListTest, SortedListStringBoundsErase)
+TEST_F(SortedListTest, StringBoundsErase)
 {
     test_bounds_erase<1, string>(stringdata, stringsort, stringlist);
     test_bounds_erase<10, string>(stringdata, stringsort, stringlist);
@@ -465,7 +465,7 @@ TEST_F(SortedListTest, SortedListStringBoundsErase)
     test_bounds_erase<1000, string>(stringdata, stringsort, stringlist);
 }
 
-TEST_F(SortedListTest, SortedListStringBounds2Erase)
+TEST_F(SortedListTest, StringBounds2Erase)
 {
     test_bounds2_erase<1, string>(stringdata, stringsort, stringlist);
     test_bounds2_erase<10, string>(stringdata, stringsort, stringlist);
@@ -473,17 +473,17 @@ TEST_F(SortedListTest, SortedListStringBounds2Erase)
     test_bounds2_erase<1000, string>(stringdata, stringsort, stringlist);
 }
 
-TEST_F(SortedListTest, SortedListStringEasyFind)
+TEST_F(SortedListTest, StringEasyFind)
 {
     test_easy_find<string>(stringdata, stringsort, stringlist);
 }
 
-TEST_F(SortedListTest, SortedListStringEasyFindErase)
+TEST_F(SortedListTest, StringEasyFindErase)
 {
     test_easy_finderase<string>(stringdata, stringsort, stringlist);
 }
 
-TEST_F(SortedListTest, SortedListStringRangeErase)
+TEST_F(SortedListTest, StringRangeErase)
 {
     test_range_erase<string>(stringdata, stringsort, stringlist);
 }
