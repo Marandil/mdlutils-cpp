@@ -5,8 +5,8 @@
 #ifndef MDLUTILS_ACCESSOR_HPP
 #define MDLUTILS_ACCESSOR_HPP
 
-#include <mdlutils/accessors/simple_accessor.hpp>
-#include <mdlutils/accessors/const_accessor.hpp>
+#include <mdlutils/accessor/simple_accessor.hpp>
+#include <mdlutils/accessor/const_accessor.hpp>
 
 namespace mdl
 {
