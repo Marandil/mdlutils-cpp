@@ -8,10 +8,17 @@
 #include <string>
 #include <cstdint>
 
+#include <cstring>
+
+#include <mdlutils/typeinfo.hpp>
+
 namespace mdl
 {
     template<typename T>
-    inline std::string stringify(const T &value) { return "Element @ 0x" + std::to_string((size_t)((void*)(&value))) + " of size (at least) " + std::to_string(sizeof(T)); }
+    inline std::string stringify(const T &value)
+    {
+        return "Element [" + mdl::type_name_s<T>() + "] @ 0x" + std::to_string((size_t)((void*)(&value))) + " of size (at least) " + std::to_string(sizeof(T));
+    }
 
     template<>
     inline std::string stringify<std::string>(const std::string &value) { return value; }
