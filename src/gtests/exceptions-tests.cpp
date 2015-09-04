@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 #include <mdlutils/exceptions.hpp>
 
-// The fixture for testing class Foo.
 class ExceptionsTest : public ::testing::Test
 {
 protected:
