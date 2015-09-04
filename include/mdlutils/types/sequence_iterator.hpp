@@ -18,7 +18,7 @@ namespace mdl
         sequence_iterator(T val, T offset = T(1)) : current(val), offset(offset)
         {
             if(offset == T(0))
-                mdl_throw(invalid_argument_exception, "Offset's value equals 0", "offset", std::to_string(offset));
+                mdl_throw(invalid_argument_exception<T>, "Offset's value equals 0", "offset", offset);
         };
         //sequence_iterator(const sequence_iterator<T>& other) : current(other.current), offset(other.offset) { };
         //sequence_iterator(sequence_iterator<T>&& other) : current(std::move(other.current)), offset(std::move(other.offset)) { };
