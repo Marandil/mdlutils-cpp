@@ -7,22 +7,10 @@
 
 #include <mdlutils/accessor/simple_accessor.hpp>
 #include <mdlutils/accessor/const_accessor.hpp>
+#include <mdlutils/accessor/getset_accessor.hpp>
 
 namespace mdl
 {
-
-    template<typename T>
-    class set_accessor : public simple_accessor<T>
-    {
-    private:
-        typedef set_accessor<T> thistype;
-
-    public:
-        set_accessor(T& ref)
-                : simple_accessor<T>(ref)
-        {}
-        operator const T&() const = delete;
-    };
 }
 
 #endif //MDLUTILS_ACCESSOR_HPP
