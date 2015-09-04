@@ -11,6 +11,7 @@ include_directories(include)
 
 set(LIB_SOURCE_FILES
         src/libs/timeit.cpp
+        src/libs/bounce_manager.cpp
 )
 
 set(TEST_SOURCE_FILES
