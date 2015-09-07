@@ -212,5 +212,41 @@ int main()
     {
         std::cout << mdl::stringify(std::cout) << std::endl;
     }
+    try
+    {
+        mdl_throw(mdl::make_ia_exception, "lambda", []()
+            { });
+    } catch (std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+    try
+    {
+        mdl_throw(mdl::make_ia_exception, "ptr", &(std::cout));
+    } catch (std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+    try
+    {
+        mdl_throw(mdl::make_ia_exception, "cout", std::cout);
+    } catch (std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+    try
+    {
+        mdl_throw(mdl::make_ia_exception, "main", main);
+    } catch (std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+    try
+    {
+        mdl_throw(mdl::make_ia_exception, "main", &main);
+    } catch (std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
     return 0;
 }

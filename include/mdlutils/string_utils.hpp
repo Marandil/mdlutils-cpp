@@ -11,6 +11,7 @@
 #include <cstdint>
 
 #include <cstring>
+#include <functional>
 
 #include <mdlutils/typeinfo.hpp>
 
@@ -41,19 +42,31 @@ namespace mdl
         template<typename T>
         std::string stringify_helper(typename std::enable_if<std::is_pointer<T>::value, const T &>::type value)
         {
-            return "Pointer [" + mdl::type_name_s<T>() + "] @ 0x" + hexify(*((size_t *) (value)));
+            return "Pointer [" + mdl::type_name_s<T>() + "] -> 0x" + hexify(reinterpret_cast<size_t>(value));
         }
 
         template<typename T>
         std::string stringify_helper(typename std::enable_if<std::is_function<T>::value, const T &>::type value)
         {
-            return "Function [" + mdl::type_name_s<T>() + "] @ 0x" + hexify((size_t) ((void *) (&value)));
+            return "Function [" + mdl::type_name_s<T>() + "] @ 0x" + hexify(reinterpret_cast<size_t>(&value));
+        }
+
+        template<typename V>
+        std::string stringify_function(const std::function<V> &value)
+        {
+            return "Function Wrapper of [" + mdl::type_name_s<V>() + "]"; // TODO: Try to use target<...>()
+        }
+
+        template<typename T>
+        std::string stringify_helper(typename std::enable_if<mdl::is_specialization_of<std::function, T>::value, const T &>::type value)
+        {
+            return stringify_function(value);
         }
 
         template<typename T>
         std::string stringify_helper(const T &value)
         {
-            return "Element [" + mdl::type_name_s<T>() + "] @ 0x" + hexify((size_t) ((void *) (&value))) +
+            return "Element [" + mdl::type_name_s<T>() + "] @ 0x" + hexify(reinterpret_cast<size_t>(&value)) +
                    " of size (at least) " + std::to_string(sizeof(T));
         }
     }

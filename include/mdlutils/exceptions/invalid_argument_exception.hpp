@@ -60,7 +60,7 @@ namespace mdl
          *
          * @return The original value of type T (as a const reference to avoid copying)
          */
-        const T& throw_value() { return value; }
+        const T &throw_value() { return value; }
 
     protected:
         /// @inherit
@@ -71,15 +71,26 @@ namespace mdl
         }
     };
 
-    /// @inherit
-    template<typename T, typename Converter=std::function<std::string(const std::function<T>&)> >
-    invalid_argument_exception<std::function<T>> make_ia_exception(const std::string &file, int line, const std::string &function,
-                                                    typename std::enable_if<std::is_function<T>::value, const std::string&>::type argName,
-                                                    const T &value, const Converter &converter = stringify<std::function<T> >)
+    namespace helper
     {
-        static_assert(std::is_function<T>::value, "is_function guard error! T should be function in this scope!");
-        return invalid_argument_exception<std::function<T>>(file, line, function, argName, std::function<T>(value), converter);
-    };
+        template<typename T, class Enable = void>
+        struct iae_type_by_type
+        {
+            typedef const T &type;
+        };
+
+        template<typename T>
+        struct iae_type_by_type<T, typename std::enable_if<std::is_copy_constructible<T>::value>::type>
+        {
+            typedef T type;
+        };
+
+        template<typename T>
+        struct iae_type_by_type<T, typename std::enable_if<std::is_function<T>::value>::type>
+        {
+            typedef const T &type;
+        };
+    }
 
     /* Construct an invalid_argument_exception for an unspecified type - automatic type resolution provided.
      * @file Name of the file file in which exception has occurred.
@@ -91,24 +102,14 @@ namespace mdl
      *
      * @return An instance of <invalid_argument_exception> with auto-determined T, and given arguments.
      */
-    template<typename T, typename Converter=std::function<std::string(const T &)> >
-    invalid_argument_exception<T> make_ia_exception(const std::string &file, int line, const std::string &function,
-                                                    typename std::enable_if<!std::is_function<T>::value, const std::string&>::type argName,
-                                                    const T &value, const Converter &converter = stringify<T>)
+    template<typename T,
+            typename Converter=std::function<std::string(const T &)>,
+            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type>
+    invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
+                                                        const std::string &argName,
+                                                        const T &value, const Converter &converter = stringify<T>)
     {
-        static_assert(!std::is_function<T>::value, "Cannot instantiate invalid_argument_exception for a function type with the current arguments.");
-        return invalid_argument_exception<T>(file, line, function, argName, value, converter);
-    };
-
-    /// @inherit
-    template<typename T, typename Converter=std::function<std::string(const std::function<T>&)> >
-    invalid_argument_exception<std::function<T>> make_ia_exception(const std::string &file, int line, const std::string &function,
-                                                                   const std::string &customErrorMessage,
-                                                                   typename std::enable_if<std::is_function<T>::value, const std::string&>::type argName,
-                                                                   const T &value, const Converter &converter = stringify<std::function<T> >)
-    {
-        static_assert(std::is_function<T>::value, "is_function guard error! T should be function in this scope!");
-        return invalid_argument_exception<std::function<T>>(file, line, function, customErrorMessage, argName, std::function<T>(value), converter);
+        return invalid_argument_exception<AutoT>(file, line, function, argName, value, converter);
     };
 
     /* Construct an invalid_argument_exception for an unspecified type - automatic type resolution provided.
@@ -122,14 +123,15 @@ namespace mdl
      *
      * @return An instance of <invalid_argument_exception> with auto-determined T, and given arguments.
      */
-    template<typename T, typename Converter=std::function<std::string(const T &)>>
-    invalid_argument_exception<T> make_ia_exception(const std::string &file, int line, const std::string &function,
-                                                    const std::string &customErrorMessage,
-                                                    typename std::enable_if<!std::is_function<T>::value, const std::string&>::type argName,
-                                                    const T &value, const Converter &converter = stringify<T>)
+    template<typename T,
+            typename Converter=std::function<std::string(const T &)>,
+            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type>
+    invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
+                                                        const std::string &customErrorMessage,
+                                                        const std::string &argName,
+                                                        const T &value, const Converter &converter = stringify<T>)
     {
-        static_assert(!std::is_function<T>::value, "Cannot instantiate invalid_argument_exception for a function type with the current arguments.");
-        return invalid_argument_exception<T>(file, line, function, customErrorMessage, argName, value, converter);
+        return invalid_argument_exception<AutoT>(file, line, function, customErrorMessage, argName, value, converter);
     };
 }
 
