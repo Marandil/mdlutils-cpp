@@ -29,6 +29,11 @@ namespace mdl
         #define PF_SUFFIX "]"
     #endif
 
+    /* Check the compile-time type name passed as the function parameter
+     * @T the type for which the typename should be determined.
+     *
+     * @return the typename T as understood by compiler's macro __PRETTY_FUNCTION__ (clang, gcc) or __FUNCSIG__ (msvc).
+     */
     template<typename T>
     inline const char *type_name()
     {
@@ -44,11 +49,14 @@ namespace mdl
             pf[typename_size - 1] = '\0';
             f = true;
         }
-        std::cout << __NICE_FUNCTION__ << std::endl;
-        std::cout << pf << std::endl;
         return pf;
     }
 
+    /* Check the compile-time type name passed as the function parameter
+     * @T the type for which the typename should be determined.
+     *
+     * @return the typename T as understood by compiler's macro __PRETTY_FUNCTION__ (clang, gcc) or __FUNCSIG__ (msvc).
+     */
     template <typename T>
     inline std::string type_name_s()
     {
