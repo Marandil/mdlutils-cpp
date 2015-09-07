@@ -62,6 +62,17 @@ namespace mdl
     {
         return type_name<T>();
     }
+
+    /* Check whether the type T is a specialization of template Template
+     * @Template Base template class
+     * @T specialized typename
+     */
+    template < template <typename...> class Template, typename T >
+    struct is_specialization_of : std::false_type {};
+
+    /// @inherit
+    template < template <typename...> class Template, typename... Args >
+    struct is_specialization_of< Template, Template<Args...> > : std::true_type {};
 }
 
 #endif //MDLUTILS_TYPEINFO_HPP
