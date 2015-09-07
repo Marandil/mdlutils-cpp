@@ -24,6 +24,11 @@ namespace mdl
             setter(value);
             return *this;
         }
+
+        void set(const T &value)
+        {
+            setter(value);
+        }
     };
 
     template<typename T, typename Getter=std::function<T(void)>>
@@ -36,6 +41,11 @@ namespace mdl
         get_accessor(Getter get) : getter{get} { };
 
         operator T() const
+        {
+            return std::move(getter());
+        }
+
+        T get() const
         {
             return std::move(getter());
         }
@@ -60,7 +70,6 @@ namespace mdl
             return *this;
         };
     };
-
 }
 
 #endif //MDLUTILS_CPP_GETSET_ACCESSOR_HPP
