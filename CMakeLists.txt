@@ -11,6 +11,7 @@ include_directories(include)
 
 set(LIB_SOURCE_FILES
         src/libs/timeit.cpp
+        src/libs/multithreading/thread_pool.cpp
 )
 
 set(TEST_SOURCE_FILES
@@ -24,7 +25,8 @@ set(GTEST_SOURCE_FILES
         src/gtests/main-tests.cpp
         src/gtests/simple_accessor-tests.cpp
         src/gtests/getset_accessor-tests.cpp
-        src/gtests/range-tests.cpp)
+        src/gtests/range-tests.cpp
+)
 
 add_library(mdlutils ${LIB_SOURCE_FILES})
 
