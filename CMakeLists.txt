@@ -24,7 +24,9 @@ set(GTEST_SOURCE_FILES
         src/gtests/main-tests.cpp
         src/gtests/simple_accessor-tests.cpp
         src/gtests/getset_accessor-tests.cpp
-        src/gtests/range-tests.cpp)
+        src/gtests/range-tests.cpp
+        src/gtests/const_vector-tests.cpp
+)
 
 add_library(mdlutils ${LIB_SOURCE_FILES})
 
