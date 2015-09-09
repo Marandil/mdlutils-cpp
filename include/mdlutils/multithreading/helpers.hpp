@@ -9,7 +9,7 @@ namespace mdl
 {
     namespace helper
     {
-        unsigned hw_concurrency()
+        unsigned inline hw_concurrency()
         {
             return std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
         }

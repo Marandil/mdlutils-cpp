@@ -6,33 +6,32 @@
 
 namespace mdl
 {
-    void thread_pool::thread_handler::operator()()
+    virtual void thread_pool::thread_handler::handle_message(message_ptr msg)
     {
-        has_empty_queue.test_and_set(); // we want this to be 1 by default
-        while (is_running.load())
+        auto msg_post = std::dynamic_pointer_cast<post_call>(msg);
+        if (msg_post)
         {
-            while (has_empty_queue.test_and_set()) // wait until there is a job in the queue
-                std::this_thread::yield();
-            is_processing.store(true); // mark yourself as currently processing
-            std::function<void()> current = job; // retrieve the function pointer to a local variable
-            if (!job) // if the retrieved job is null, throw invalid_argument_exception
-                mdl_throw(mdl::make_ia_exception, "job", nullptr);
-            job = nullptr; // set the job to be null,
-            // pool should check whether nothing is assigned, even if the thread claims to not be processing
-            // (is_processing == false with a job in queue is possible)
-
             try
             {
                 // invoke the job
-                current();
+                msg_post->function();
                 // after the job has been done
             }
             catch (const std::exception &e)
             {
                 parent.register_exception(std::current_exception());
             }
+        }
+    }
 
-            is_processing.store(false);
+    void thread_pool::stop_and_join()
+    {
+        throw_if_nonempty();
+
+        for (auto &i : pool)
+        {
+            i->is_running.store(false);
+            i->thread.join();
         }
     }
 
@@ -52,4 +51,5 @@ namespace mdl
         // TODO: (2) add another exception like rethrown_exception and throw it instead.
         std::rethrow_exception(e);
     }
+
 }

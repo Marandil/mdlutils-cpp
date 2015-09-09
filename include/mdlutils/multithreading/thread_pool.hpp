@@ -14,28 +14,28 @@
 #include <functional>
 
 #include <mdlutils/exceptions.hpp>
+#include <mdlutils/accessor/const_accessor.hpp>
 #include <mdlutils/multithreading/helpers.hpp>
+#include <mdlutils/multithreading/handler.hpp>
+#include <mdlutils/multithreading/looper.hpp>
 
 namespace mdl
 {
     class thread_pool
     {
     protected:
-        struct thread_handler
+        struct thread_handler : public looper_thread, public mdl::handler
         {
-            thread_pool& parent;
+            thread_pool &parent;
             unsigned id;
 
-            thread_handler(thread_pool& parent, unsigned id) : id(id), parent(parent), thread([&]{this->operator()();}) { }
+            thread_handler(thread_pool &parent, unsigned id) :
+                    id(id),
+                    parent(parent),
+                    mdl::handler(), looper_thread(static_cast<mdl::handler&>(*this))
+            { }
 
-            std::thread thread;
-            std::atomic_bool is_running{true};
-            std::atomic_bool is_processing{false};
-            std::atomic_flag has_empty_queue; // defaults to false?
-
-            std::function<void()> job;
-
-            void operator() ();
+            virtual void handle_message(message_ptr msg);
         };
 
         std::vector<std::shared_ptr<thread_handler>> pool;
@@ -47,15 +47,22 @@ namespace mdl
 
         void throw_if_nonempty();
 
+        void stop_and_join();
+
         unsigned processes;
 
     public:
         thread_pool(unsigned processes = helper::hw_concurrency()) : processes(processes), pool(processes, nullptr)
         {
-            while(processes--) pool[processes].reset(new thread_handler(*this, processes));
+            while (processes--) pool[processes].reset(new thread_handler(*this, processes));
         }
 
-        ~thread_pool(void)      {    }
+        ~thread_pool(void)
+        {
+            stop_and_join();
+        }
+
+        mdl::const_accessor<unsigned> workers{processes};
     };
 }
 
