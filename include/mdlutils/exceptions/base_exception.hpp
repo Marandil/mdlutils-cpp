@@ -9,13 +9,14 @@
 #include <string>
 
 #include <mdlutils/typedefs.hpp>
+#include <mdlutils/typeinfo.hpp>
 
 #ifndef mdl_throw
-/* Custom exception throwing (adds filename and exception line).
+/* Custom exception throwing (adds filename, function header and exception line).
  * @ex exception class
- * @args exception class arguments.
+ * @... exception class arguments.
  */
-#define mdl_throw(ex, args...) throw ex(args, __FILE__, __LINE__);
+#define mdl_throw(ex, ...) throw ex(__FILE__, __LINE__, __NICE_FUNCTION__, __VA_ARGS__);
 #endif
 
 namespace mdl
@@ -30,16 +31,16 @@ namespace mdl
          * @file name of the file file in which exception has occurred.
          * @line line at which exception has occurred.
          */
-        base_exception(const std::string &file, int line)
-                : message(""), file(file), line(line) { commit_message(); }
+        base_exception(const std::string &file, int line, const std::string &function)
+                : message(""), file(file), line(line), function(function) { commit_message(); }
 
         /* Constructs exception instance.
          * @err exception message.
          * @file name of the file file in which exception has occurred.
          * @line line at which exception has occurred.
          */
-        base_exception(const std::string &err, const std::string &file, int line)
-                : message(err), file(file), line(line) { commit_message(); }
+        base_exception(const std::string &file, int line, const std::string &function, const std::string &err)
+                : message(err), file(file), line(line), function(function) { commit_message(); }
 
         /* Destructor that cannot throw exception (required by some compilers).
          */
@@ -51,7 +52,7 @@ namespace mdl
          */
         virtual void commit_message() throw()
         {
-            what_buffer = (tag() + ": " + message + "\n\tat " + std::to_string(line) + " in " + file);
+            what_buffer = (tag() + ": " + message + "\n\tin function " + function + "\n\tat " + std::to_string(line) + " in " + file);
         }
 
         /* Function called when this exception is thrown.
@@ -65,6 +66,7 @@ namespace mdl
 
         virtual int throw_line() const { return line; }
         virtual std::string throw_file() const { return file; }
+        virtual std::string throw_function() const { return function; }
 
     protected:
         /** what() const char* buffer, makes sure it's c_str is not freed between the calls */
@@ -73,6 +75,8 @@ namespace mdl
         std::string message;
         /** Name of the file in which exception has occurred. */
         std::string file;
+        /** Name of the function in which exception has occurred. */
+        std::string function;
         /** Line at which exception has occurred. */
         int line;
 

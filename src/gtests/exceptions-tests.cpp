@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 #include <mdlutils/exceptions.hpp>
 
-// The fixture for testing class Foo.
 class ExceptionsTest : public ::testing::Test
 {
 protected:
@@ -70,19 +69,42 @@ TEST_F(ExceptionsTest, BaseExceptionFilename)
     EXPECT_TRUE(false); // Didn't catch
 }
 
+void function()
+{
+    std::string function = "void function()";
+    try
+    {
+        mdl_throw(mdl::base_exception, "test");
+    }
+    catch (mdl::base_exception &e)
+    {
+        EXPECT_EQ(function, e.throw_function());
+        return;
+    }
+    EXPECT_TRUE(false); // Didn't catch
+}
+
+TEST_F(ExceptionsTest, BaseExceptionFunction)
+{
+    function();
+}
+
 TEST_F(ExceptionsTest, BaseExceptionWhat)
 {
     int line = 0;
-    std::string filename;
+    std::string filename, function;
     try
     {
         filename = __FILE__;
+        function = __NICE_FUNCTION__;
         line = __LINE__ + 1;
         mdl_throw(mdl::base_exception, "test");
     }
     catch (mdl::base_exception &e)
     {
-        std::string expected("BaseException: test\n\tat " + std::to_string(line) + " in " + filename);
+        std::string expected(
+                "BaseException: test\n\tin function " + function + "\n\tat " + std::to_string(line) + " in " +
+                filename);
         EXPECT_EQ(expected, e.what()); // should invoke std::string(const char*) constructor
         return;
     }
@@ -92,18 +114,60 @@ TEST_F(ExceptionsTest, BaseExceptionWhat)
 TEST_F(ExceptionsTest, NotImplementedExceptionWhat)
 {
     int line = 0;
-    std::string filename;
+    std::string filename, function;
     try
     {
         filename = __FILE__;
+        function = __NICE_FUNCTION__;
         line = __LINE__ + 1;
         mdl_throw(mdl::not_implemented_exception, "test");
     }
     catch (mdl::base_exception &e)
     {
-        std::string expected("NotImplementedException: test\n\tat " + std::to_string(line) + " in " + filename);
+        std::string expected(
+                "NotImplementedException: test\n\tin function " + function + "\n\tat " + std::to_string(line) + " in " +
+                filename);
         EXPECT_EQ(expected, e.what()); // should invoke std::string(const char*) constructor
         return;
     }
     EXPECT_TRUE(false); // Didn't catch
+}
+
+template<typename T>
+void test_numeric_invalid_argument_exception(T number)
+{
+    try
+    {
+        mdl_throw(mdl::invalid_argument_exception<T>, "number", number);
+    }
+    catch (mdl::base_exception &e)
+    {
+        std::string expected("InvalidArgumentException: Argument number with value " + std::to_string(number));
+        std::string what = e.what();
+        // shrink what so that it does not contain the parametric values (like function, line, etc)
+        what = what.substr(0, what.find("\n\tin"));
+        EXPECT_EQ(expected, what); // should invoke std::string(const char*) constructor
+        return;
+    }
+    EXPECT_TRUE(false); // Didn't catch
+}
+
+TEST_F(ExceptionsTest, IntegerInvalidArgumentException)
+{
+    test_numeric_invalid_argument_exception<int8_t>(1);
+    test_numeric_invalid_argument_exception<int16_t>(1);
+    test_numeric_invalid_argument_exception<int32_t>(1);
+    test_numeric_invalid_argument_exception<int64_t>(1);
+
+    test_numeric_invalid_argument_exception<uint8_t>(1);
+    test_numeric_invalid_argument_exception<uint16_t>(1);
+    test_numeric_invalid_argument_exception<uint32_t>(1);
+    test_numeric_invalid_argument_exception<uint64_t>(1);
+}
+
+TEST_F(ExceptionsTest, FloatInvalidArgumentException)
+{
+    test_numeric_invalid_argument_exception<float>(1);
+    test_numeric_invalid_argument_exception<double>(1);
+    test_numeric_invalid_argument_exception<long double>(1);
 }
