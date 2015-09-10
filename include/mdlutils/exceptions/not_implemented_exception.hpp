@@ -12,11 +12,20 @@
 
 namespace mdl
 {
+    /* Simple exception that should be thrown in all unimplemented methods.
+     *
+     * Other uses are welcome.
+     */
     class not_implemented_exception : public base_exception
     {
     public:
-        not_implemented_exception(const std::string &functionName, const std::string &file, int line) :
-                base_exception(functionName, file, line) { commit_message(); }
+        /* Default constructor.
+         * @file Name of the file file in which exception has occurred.
+         * @line Line at which exception has occurred.
+         * @function The signature of the function that throws the exception.
+         */
+        not_implemented_exception(const std::string &file, int line, const std::string &functionName, const std::string& msg = "") :
+                base_exception(file, line, functionName, msg) { }
 
     protected:
         /// @inherit
