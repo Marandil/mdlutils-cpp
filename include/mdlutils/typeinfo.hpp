@@ -21,10 +21,12 @@ namespace mdl
 {
     // TODO: Check the compatibility with MSVC
 
-    #ifdef _MSC_VER
-        #define PF_PREFIX "const char* mdl::type_name<"
-        #define PF_SUFFIX ">()"
+	#ifdef _MSC_VER
+		// const char *__cdecl mdl::type_name<...>(void)
+        #define PF_PREFIX "const char *__cdecl mdl::type_name<"
+        #define PF_SUFFIX ">(void)"
     #else
+		// const char* mdl::type_name() [T = ...]
         #define PF_PREFIX "const char* mdl::type_name() [T = "
         #define PF_SUFFIX "]"
     #endif
