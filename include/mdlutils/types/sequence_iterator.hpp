@@ -88,10 +88,18 @@ namespace mdl
 
         bool operator==(const sequence_iterator<T> &rhs) const { return current == rhs.current; }
         bool operator!=(const sequence_iterator<T> &rhs) const { return current != rhs.current; }
-        bool operator<(const sequence_iterator<T> &rhs) const { return current < rhs.current; }
-        bool operator>(const sequence_iterator<T> &rhs) const { return current > rhs.current; }
-        bool operator<=(const sequence_iterator<T> &rhs) const { return current <= rhs.current; }
-        bool operator>=(const sequence_iterator<T> &rhs) const { return current >= rhs.current; }
+		bool operator<(const sequence_iterator<T> &rhs) const
+		{
+			bool check = current < rhs.current;
+			return (offset > 0) ? check : !check;
+		}
+        bool operator>(const sequence_iterator<T> &rhs) const
+		{
+			bool check = current > rhs.current;
+			return (offset > 0) ? check : !check;
+		}
+        bool operator<=(const sequence_iterator<T> &rhs) const { return !(*this > rhs); }
+        bool operator>=(const sequence_iterator<T> &rhs) const { return !(*this < rhs); }
 
         T &operator*() { return current; }
         const T &operator*() const { return current; }

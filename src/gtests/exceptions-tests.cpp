@@ -71,7 +71,11 @@ TEST_F(ExceptionsTest, BaseExceptionFilename)
 
 void function()
 {
-    std::string function = "void function()";
+#ifdef _MSC_VER
+    std::string function = "void __cdecl function(void)";
+#else
+	std::string function = "void function()";
+#endif
     try
     {
         mdl_throw(mdl::base_exception, "test");

@@ -32,7 +32,7 @@ namespace mdl
         function();
         std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now();
         timeit_t duration = (stop - start);
-        uint32_t s, ms, us, ns;
+        uint64_t s, ms, us, ns;
         s = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
         us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() % 1000;
@@ -52,7 +52,7 @@ namespace mdl
             function();
         std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now();
         timeit_t duration = (stop - start);
-        uint32_t s, ms, us, ns;
+        uint64_t s, ms, us, ns;
         s = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
         us = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() % 1000;
