@@ -11,14 +11,20 @@
 namespace mdl
 {
     template<typename T, typename Alloc=std::allocator<T>>
-    class const_vector
+    class const_vector : protected Alloc
     {
     public:
+        // First template argument
         typedef T value_type;
+        // Second template argument
         typedef Alloc allocator_type;
+        // Reference type, equivalent to T&
         typedef value_type &reference;
+        // Const reference type, equivalent to const T&
         typedef const value_type &const_reference;
+        // Pointer type of the corresponding <allocator_type>.
         typedef typename std::allocator_traits<allocator_type>::pointer pointer;
+        // Const pointer type of the corresponding <allocator_type>.
         typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
 
         // A random access iterator (pointer)
@@ -32,43 +38,42 @@ namespace mdl
 
 
     protected:
-        size_t array_size;
         const pointer p_begin, p_end;
 
-        Alloc alloc;
-
-        const_vector(size_t size, std::nullptr_t null) : array_size(size), alloc(), p_begin(alloc.allocate(size)),
-                                                         p_end(p_begin + array_size) { }
+        const_vector(size_t size, std::nullptr_t null) : Alloc(), p_begin(this->allocate(size)),
+                                                         p_end(p_begin + size) { }
 
     public:
         const_vector(size_t size, Alloc alloc = Alloc()) :
-                array_size(size),
-                alloc(alloc),
+                Alloc(alloc),
                 p_begin(alloc.allocate(size)),
-                p_end(p_begin + array_size)
+                p_end(p_begin + size)
         {
             while (size--)
                 alloc.construct(&p_begin[size]);
         }
 
         template<typename... Args>
-        const_vector(size_t size, Args... args) : array_size(size), alloc(), p_begin(alloc.allocate(size)),
-                                                  p_end(p_begin + array_size)
+        const_vector(size_t size, Args... args) :
+                Alloc(),
+                p_begin(this->allocate(size)),
+                p_end(p_begin + size)
         {
             while (size--)
-                alloc.construct(&p_begin[size], args...);
+                construct(&p_begin[size], args...);
         }
 
         const_vector(const const_vector<T, Alloc> &other) = delete;
 
-        const_vector(const_vector<T, Alloc> &&other) : array_size(other.array_size), alloc(other.alloc),
-                                                       p_begin(other.p_begin), p_end(other.p_end) { }
+        const_vector(const_vector<T, Alloc> &&other) : Alloc(other.alloc),
+                                                       p_begin(other.p_begin),
+                                                       p_end(other.p_end) { }
 
         ~const_vector(void)
         {
-            for (unsigned i = array_size; i--;)
-                alloc.destroy(&p_begin[i]);
-            alloc.deallocate(p_begin, array_size);
+            for (reference p : (*this))
+                this->destroy(this->address(p));
+            this->deallocate(p_begin, p_end - p_begin);
             return;
         }
 
@@ -84,13 +89,13 @@ namespace mdl
 
         const_iterator cend() const { return p_end; }
 
-        size_type size() { return array_size; }
+        size_type size() { return p_end - p_begin; }
 
-        size_type max_size() { return array_size; }
+        size_type max_size() { return p_end - p_begin; }
 
-        size_type capacity() { return array_size; }
+        size_type capacity() { return p_end - p_begin; }
 
-        bool empty() { return !array_size; }
+        bool empty() { return !(p_end - p_begin); }
 
         reference operator[](size_t index) { return p_begin[index]; }
 
@@ -112,14 +117,14 @@ namespace mdl
 
         const_pointer data() const { return p_begin; }
 
-        allocator_type get_allocator() const { return alloc; }
+        allocator_type get_allocator() const { return static_cast<allocator_type>(*this); }
 
         template<typename... Args>
         static const_vector<T, Alloc> make_indexed(size_t size, Args... args)
         {
             const_vector<T, Alloc> result(size, nullptr);
             while (size--)
-                result.alloc.construct(&(result.p_begin[size]), size, args...);
+                result.construct(&(result.p_begin[size]), size, args...);
             return result;
         };
 
