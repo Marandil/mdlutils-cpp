@@ -10,6 +10,7 @@
 #include <mdlutils/timeit.hpp>
 
 #include <mdlutils/types/sorted_list.hpp>
+#include <mdlutils/types/const_vector.hpp>
 
 std::vector<int> topofn_test_data;
 
@@ -247,6 +248,12 @@ int main()
     } catch (std::exception &e)
     {
         std::cout << e.what() << std::endl;
+    }
+    {
+        mdl::const_vector<int> c(10);
+        std::vector<int> v(10);
+        std::cout << sizeof(c) << std::endl;
+        std::cout << sizeof(v) << std::endl;
     }
     return 0;
 }
