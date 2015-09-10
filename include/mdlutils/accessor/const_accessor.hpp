@@ -31,8 +31,6 @@ namespace mdl
         }
     };
 
-    template<typename T> using get_accessor = const_accessor<T>;
-
 }
 
 #endif //MDLUTILS_CPP_CONST_ACCESSOR_HPP

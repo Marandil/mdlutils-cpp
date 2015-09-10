@@ -10,45 +10,65 @@
 
 namespace mdl
 {
+    /* std::multiset-emulating class, utilizing std::list as a base container.
+     * @T Type of the elements.
+     * @Compare A binary predicate that takes two arguments of the same type as the elements and returns a bool.
+     * @Alloc Type of the allocator object used to define the storage allocation model.
+     */
     template<typename T, typename Compare = std::less<T>, typename Alloc = std::allocator<T>>
     class sorted_list
     {
     protected:
+        // The underlying container, std::list with Alloc as the allocator.
         typedef std::list<T, Alloc> base_type;
         base_type base;
         Compare comp;
         Alloc alloc;
 
     public:
+        // The second template parameter.
         typedef Compare key_compare;
+        // The second template parameter.
         typedef Compare value_compare;
 
+        // The first template parameter.
         typedef T key_type;
+        // The first template parameter.
         typedef T value_type;
 
+        // The third template parameter
         typedef Alloc allocator_type;
 
+        // value_type&
         typedef T &reference;
+        // const value_type&
         typedef const T &const_reference;
 
+        // Pointer type of the allocator_type.
         typedef typename std::allocator_traits<allocator_type>::pointer pointer;
+        // Const pointer type of the allocator_type.
         typedef typename std::allocator_traits<allocator_type>::pointer const_pointer;
 
-        // const iterator to prevent modifying already inserted values.
+        // A bidirectional iterator to const value_type.
         typedef typename base_type::const_iterator iterator;
+        // A bidirectional iterator to const value_type.
         typedef typename base_type::const_iterator const_iterator;
-        // const iterator to prevent modifying already inserted values.
+        // A reverse iterator on <iterator>.
         typedef typename base_type::const_reverse_iterator reverse_iterator;
+        // A reverse iterator on <const_iterator>.
         typedef typename base_type::const_reverse_iterator const_reverse_iterator;
 
+        // A signed integral type representing the differences between the iterators.
         typedef typename std::iterator_traits<iterator>::difference_type difference_type;
+        // An unsigned integral type representing the size of the container.
         typedef size_t size_type;
 
 
     protected:
-        /* Check whether the *ai >= b and b >= *ai in terms of comp being < operator
+        /* Check whether the *ai >= b and b >= *ai in terms of comp being < operator.
          * @ai iterator to an element of base list.
          * @b an element of type T.
+         *
          * @return true, if *ai is not smaller than b, nor b is smaller than *ai.
          */
         bool equiv(iterator ai, const T &b) const
@@ -56,9 +76,10 @@ namespace mdl
             return (!(comp(*ai, b) || comp(b, *ai)));
         }
 
-        /* Check whether the *ai >= *bi and *bi >= *ai in terms of comp being < operator
+        /* Check whether the *ai >= *bi and *bi >= *ai in terms of comp being < operator.
          * @ai iterator to an element of base list.
          * @bi iterator to an element of base list.
+         *
          * @return true, if *ai is not smaller than *bi, nor *bi is smaller than *ai.
          */
         bool equiv(iterator ai, iterator bi)
@@ -122,6 +143,7 @@ namespace mdl
 
         /* Create and insert a new element.
          * @args the values to be passed to the constructor.
+         *
          * @return an iterator that points to the inserted element.
          */
         template<typename... Args>
@@ -133,6 +155,7 @@ namespace mdl
         /* Create and insert a new element,  given an hinted position.
          * @position hinted position to consider while inserting.
          * @args the values to be passed to the constructor.
+         *
          * @return an iterator that points to the inserted element.
          */
         template<typename... Args>
@@ -167,6 +190,7 @@ namespace mdl
 
         /* Insert element
          * @value the value to be inserted.
+         *
          * @return an iterator that points to the inserted element.
          */
         iterator insert(const T &value)
@@ -187,6 +211,7 @@ namespace mdl
         /* Insert element, given an hinted position.
          * @position hinted position to consider while inserting.
          * @value the value to be inserted.
+         *
          * @return an iterator that points to the inserted element.
          */
         iterator insert(iterator position, const T &value)
@@ -218,6 +243,7 @@ namespace mdl
         /* Insert range of elements
          * @first iterator specifying the first element in the inserting range
          * @last iterator specifying the element after the last in the inserting range
+         *
          * @return an iterator that points to the last inserted element.
          */
         template<typename InsertIterator>
@@ -231,6 +257,7 @@ namespace mdl
          * @position hinted position to consider while inserting.
          * @first iterator specifying the first element in the inserting range.
          * @last iterator specifying the element after the last in the inserting range.
+         *
          * @return an iterator that points to the last inserted element.
          */
         template<typename InsertIterator>
@@ -244,6 +271,7 @@ namespace mdl
 
         /* Searches the list for the first element equivalent to <value>
          * @value key of the element to search for.
+         *
          * @return valid iterator to the first element found, or <end()> if the element was not found.
          */
         iterator find(const T &value) const
@@ -258,6 +286,7 @@ namespace mdl
 
         /* Searches the container for elements equivalent to value and returns the number of matches.
          * @value key of the element to search for.
+         *
          * @return number of elements in the container that are equivalent to <value>.
          */
         size_t count(const T &value) const
@@ -270,12 +299,14 @@ namespace mdl
 
         /* Returns the iterator for the first element equivalent to value (equivalent to <find>)
          * @value key of the element to search for.
+         *
          * @return valid iterator to the first element found, or end() if the element was not found.
          */
         iterator lower_bound(const T &value) const { return find(value); }
 
         /* Returns the iterator for the first element after <lower_bound> not equivalent to value
          * @value key of the element to search for.
+         *
          * @return valid iterator to the first element found after the equivalence class of value.
          */
         iterator upper_bound(const T &value) const
@@ -287,6 +318,7 @@ namespace mdl
 
         /* Returns the bounds of a range that includes all the elements in the container that are equivalent to <value>.
          * @value key of the element to search for.
+         *
          * @return a pair, whose member pair::first is the lower bound of the range (the same as lower_bound), and pair::second is the upper bound (the same as upper_bound).
          */
         std::pair<iterator, iterator> equal_range(const T &value) const
@@ -299,6 +331,7 @@ namespace mdl
         /* Erase element given a hinted position (not necessarily containing the value)
          * @position hinted position to consider while removing.
          * @value value to be removed from the set.
+         *
          * @return the number of elements removed.
          */
         size_t erase(iterator position, const T &value)
@@ -403,28 +436,40 @@ namespace mdl
             return base;
         };
 
+        // Return an iterator to the first element of the sequence
         iterator begin() { return base.begin(); }
 
+        // Return an iterator to the element after the last element of the sequence
         iterator end() { return base.end(); }
 
+        // Return an iterator to the first element of the sequence
         const_iterator begin() const { return base.begin(); }
 
+        // Return an iterator to the element after the last element of the sequence
         const_iterator end() const { return base.end(); }
 
+        // Return an iterator to the first element of the sequence
         const_iterator cbegin() const { return base.cbegin(); }
 
+        // Return an iterator to the element after the last element of the sequence
         const_iterator cend() const { return base.cend(); }
 
+        // Return a reverse_iterator to the last element of the sequence
         reverse_iterator rbegin() { return base.rbegin(); }
 
+        // Return the end() reverse_iterator of the sequence
         reverse_iterator rend() { return base.rend(); }
 
+        // Return a reverse_iterator to the last element of the sequence
         const_reverse_iterator rbegin() const { return base.rbegin(); }
 
+        // Return the end() reverse_iterator of the sequence
         const_reverse_iterator rend() const { return base.rend(); }
 
+        // Return a reverse_iterator to the last element of the sequence
         const_reverse_iterator crbegin() const { return base.crbegin(); }
 
+        // Return the end() reverse_iterator of the sequence
         const_reverse_iterator crend() const { return base.crend(); }
 
         /* Returns a copy of the comparison object used by the container. */

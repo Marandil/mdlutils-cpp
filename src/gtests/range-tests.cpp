@@ -122,5 +122,7 @@ TEST_F(RangeTest, PythonRRT)
         mdl::range<int> r(item.first.s, item.first.e, item.first.o);
         std::vector<int> test(r.begin(), r.end());
         EXPECT_EQ(test, item.second);
+        EXPECT_EQ(test.size(), r.size());
+        EXPECT_EQ(item.second.size(), r.size());
     }
 }
