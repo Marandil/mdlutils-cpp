@@ -19,6 +19,8 @@ set(TEST_SOURCE_FILES
 
 set(GTEST_SOURCE_FILES
         src/gtests/exceptions-tests.cpp
+        src/gtests/sorted_list-tests.cpp
+        src/gtests/main-tests.cpp
 )
 
 add_library(mdlutils ${LIB_SOURCE_FILES})
