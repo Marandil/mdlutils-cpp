@@ -10,6 +10,7 @@
 #include <mdlutils/timeit.hpp>
 
 #include <mdlutils/types/sorted_list.hpp>
+#include <mdlutils/types/const_vector.hpp>
 
 #include <mdlutils/multithreading/thread_pool.hpp>
 
@@ -253,6 +254,12 @@ int main()
     {
         mdl::thread_pool workers;
         std::cout << "Created a thread_pool with " << workers.workers << " workers" << std::endl;
+    }
+    {
+        mdl::const_vector<int> c(10);
+        std::vector<int> v(10);
+        std::cout << sizeof(c) << std::endl;
+        std::cout << sizeof(v) << std::endl;
     }
     return 0;
 }
