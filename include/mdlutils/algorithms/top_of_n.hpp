@@ -34,7 +34,7 @@ namespace mdl
         }
         sorted_list temporary;
 
-        for (int i : range<int>(elements))
+        for (size_t i : range<size_t>(elements))
             temporary.insert(*(first++));
 
         for (; first != last; ++first)
@@ -59,7 +59,7 @@ namespace mdl
                       elements);
         }
         std::multiset<std::reference_wrapper<typename RandomAccessIterator::value_type>, Compare> temporary(comp);
-        for (int _ : range<int>(elements))
+        for (size_t _ : range<size_t>(elements))
         {
             temporary.insert((*first));
             ++first;
@@ -98,7 +98,7 @@ namespace mdl
         result_t temporary;
         temporary.reserve(elements); // Can't resize for references
 
-        for (int _ : range<int>(elements))
+        for (size_t _ : range<size_t>(elements))
         {
             temporary.push_back(heap.front());
             std::pop_heap(h_begin, h_end--, h_comp); // pop heap without unnecessary overhead

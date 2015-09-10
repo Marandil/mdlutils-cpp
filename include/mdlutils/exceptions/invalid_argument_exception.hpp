@@ -88,7 +88,7 @@ namespace mdl
         template<typename T>
         struct iae_type_by_type<T, typename std::enable_if<std::is_function<T>::value>::type>
         {
-            typedef const T &type;
+            typedef T &type;
         };
     }
 
