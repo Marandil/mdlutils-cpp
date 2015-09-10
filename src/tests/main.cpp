@@ -11,6 +11,8 @@
 
 #include <mdlutils/types/sorted_list.hpp>
 
+#include <mdlutils/multithreading/thread_pool.hpp>
+
 std::vector<int> topofn_test_data;
 
 void time_topofn_set()
@@ -247,6 +249,10 @@ int main()
     } catch (std::exception &e)
     {
         std::cout << e.what() << std::endl;
+    }
+    {
+        mdl::thread_pool workers;
+        std::cout << "Created a thread_pool with " << workers.workers << " workers" << std::endl;
     }
     return 0;
 }
