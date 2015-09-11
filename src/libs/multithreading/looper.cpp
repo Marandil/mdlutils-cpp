@@ -27,15 +27,17 @@ namespace mdl
                     message = message_queue.front();
                     message_queue.pop();
                 }
+
+                handler.handle_message(message);
             }
             catch (std::exception &e)
             {
                 std::exception_ptr p = std::current_exception();
                 if (exception_handler)
                     exception_handler->handle_exception(p);
+                else
+                    std::rethrow_exception(p);
             }
-
-            handler.handle_message(message);
 
             is_processing.store(false);
         }

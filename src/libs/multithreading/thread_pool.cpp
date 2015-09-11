@@ -6,7 +6,7 @@
 
 namespace mdl
 {
-    virtual void thread_pool::thread_handler::handle_message(message_ptr msg)
+    void thread_pool::thread_handler::handle_message(message_ptr msg)
     {
         auto msg_post = std::dynamic_pointer_cast<post_call>(msg);
         if (msg_post)
@@ -30,8 +30,9 @@ namespace mdl
 
         for (auto &i : pool)
         {
-            i->is_running.store(false);
-            i->thread.join();
+            // TODO: Change to quit_safely once implemented.
+            i->running = false;
+            i->join();
         }
     }
 

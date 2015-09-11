@@ -10,10 +10,11 @@
 
 namespace mdl
 {
-    struct message { };
+    struct message { virtual ~message() {} };
 
-    struct post_call
+    struct post_call : public message
     {
+        virtual ~post_call() {}
         std::function<void(void)> function;
     };
 
