@@ -12,9 +12,7 @@ namespace mdl
 
         for (auto &i : pool)
         {
-            // TODO: Change to quit_safely once implemented.
-            i->running = false;
-            i->join();
+            i->stop_and_join_safely();
         }
     }
 

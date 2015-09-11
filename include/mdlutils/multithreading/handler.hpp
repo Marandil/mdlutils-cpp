@@ -33,6 +33,12 @@ namespace mdl
     public:
         virtual bool handle_message(message_ptr);
     };
+
+    class break_handler : public handler
+    {
+    public:
+        virtual bool handle_message(message_ptr);
+    };
 }
 
 #endif //MDLUTILS_MULTITHREADING_HANDLER_HPP

@@ -12,17 +12,30 @@
 
 namespace mdl
 {
-    struct message { virtual ~message() {} };
+    struct message
+    {
+        virtual ~message() { }
+    };
+
+    struct break_message : public message
+    { virtual ~break_message() {} };
 
     struct post_call : public message
     {
-        virtual ~post_call() {}
+        post_call(std::function<void(void)> function) : function(function) { }
+
+        virtual ~post_call() { }
+
         std::function<void(void)> function;
     };
 
     struct delayed_message : public message
     {
-        virtual ~delayed_message() {}
+        delayed_message(std::shared_ptr<message> content,
+                        time_point_t delayed_until) : content(content), delayed_until(delayed_until) { }
+
+        virtual ~delayed_message() { }
+
         std::shared_ptr<message> content;
         time_point_t delayed_until;
     };

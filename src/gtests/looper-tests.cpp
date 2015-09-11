@@ -19,6 +19,7 @@ protected:
         {
             if (msg == nullptr)
             {
+                std::cout << "NullHandler" << std::endl;
                 history.push_back(0);
                 return true;
             }
@@ -34,4 +35,10 @@ protected:
 TEST_F(LooperTest, CreateAndExit)
 {
     EXPECT_TRUE(true);
+}
+
+TEST_F(LooperTest, SimpleNullCall)
+{
+    looper.send_message(nullptr);
+    looper.stop_and_join_safely();
 }
