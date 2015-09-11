@@ -30,7 +30,7 @@ set(GTEST_SOURCE_FILES
         src/gtests/getset_accessor-tests.cpp
         src/gtests/range-tests.cpp
         src/gtests/const_vector-tests.cpp
-)
+        src/gtests/looper-tests.cpp src/gtests/handler-tests.cpp)
 
 add_library(mdlutils ${LIB_SOURCE_FILES})
 target_link_libraries(mdlutils ${CMAKE_THREAD_LIBS_INIT})

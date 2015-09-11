@@ -24,7 +24,7 @@ namespace mdl
     {
         virtual ~delayed_message() {}
         std::shared_ptr<message> content;
-        helper::time_point_t delayed_until;
+        time_point_t delayed_until;
     };
 
     typedef std::shared_ptr<message> message_ptr;

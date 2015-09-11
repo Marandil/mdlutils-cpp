@@ -5,6 +5,8 @@
 #ifndef MDLUTILS_MULTITHREADING_HANDLER_HPP
 #define MDLUTILS_MULTITHREADING_HANDLER_HPP
 
+#include <queue>
+
 #include <mdlutils/exceptions/exception_handler.hpp>
 #include <mdlutils/multithreading/messages.hpp>
 
@@ -13,17 +15,23 @@ namespace mdl
     class handler
     {
     public:
-        virtual void handle_message(message_ptr) = 0;
+        virtual bool handle_message(message_ptr) = 0;
     };
 
+    class delaying_handler : public handler
+    {
+    protected:
+        std::queue<message_ptr>& queue;
+        std::mutex& queue_lock;
+    public:
+        delaying_handler(std::queue<message_ptr>& queue, std::mutex& lock) : queue(queue), queue_lock(lock) { }
+        virtual bool handle_message(message_ptr);
+    };
 
     class executor_handler : public handler
     {
-    protected:
-        exception_handler& exception_h;
     public:
-        executor_handler(exception_handler& exception_handler) : exception_h(exception_handler) { }
-        virtual void handle_message(message_ptr);
+        virtual bool handle_message(message_ptr);
     };
 }
 

@@ -21,10 +21,10 @@
 
 namespace mdl
 {
-    class thread_pool : public mdl::exception_handler
+    class thread_pool : protected mdl::exception_handler
     {
     protected:
-        struct thread_handler : public looper_thread, public mdl::executor_handler
+        struct thread_handler : public looper_thread
         {
             thread_pool &parent;
             unsigned id;
@@ -32,17 +32,15 @@ namespace mdl
             thread_handler(thread_pool &parent, unsigned id) :
                     id(id),
                     parent(parent),
-                    mdl::executor_handler(static_cast<mdl::exception_handler&>(parent)),
-                                          looper_thread(static_cast<mdl::handler&>(*this))
-            { }
+                    looper_thread() { }
         };
+
+        virtual void handle_exception(std::exception_ptr);
 
         std::vector<std::shared_ptr<thread_handler>> pool;
 
         std::mutex exception_queue_lock;
         std::queue<std::exception_ptr> exception_queue;
-
-        virtual void handle_exception(std::exception_ptr ptr);
 
         void throw_if_nonempty();
 

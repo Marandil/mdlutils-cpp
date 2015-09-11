@@ -3,23 +3,26 @@
 //
 
 #include <mdlutils/multithreading/handler.hpp>
+#include <mdlutils/exceptions/not_implemented_exception.hpp>
 
 namespace mdl
 {
-    void executor_handler::handle_message(message_ptr msg)
+    bool executor_handler::handle_message(message_ptr msg)
     {
         auto msg_post = std::dynamic_pointer_cast<post_call>(msg);
         if (msg_post)
         {
-            try
-            {
-                // invoke the function
-                msg_post->function();
-            }
-            catch (const std::exception &e)
-            {
-                exception_h.handle_exception(std::current_exception());
-            }
+            // invoke the function
+            msg_post->function();
+            return true;
         }
+        return false;
+    }
+
+    bool delaying_handler::handle_message(message_ptr msg)
+    {
+        // TODO: Implement this
+        mdl_throw(not_implemented_exception, "");
+        return false;
     }
 }

@@ -6,8 +6,12 @@
 
 namespace mdl
 {
-    void looper::loop()
+    void looper_base::loop()
     {
+        if (is_running.load())
+            mdl_throw(invalid_state_exception<decltype(*this)>, "Looper already running", *this);
+
+        is_running.store(true);
         has_empty_queue.test_and_set(); // we want this to be 1 by default
         while (is_running.load())
         {
@@ -19,16 +23,16 @@ namespace mdl
 
             is_processing.store(true); // mark yourself as currently processing
 
+            message_ptr message;
             try
             {
-                message_ptr message;
                 {
-                    std::lock_guard<std::mutex> scope_lock(message_queue_lock);
+                    mutex_lock scope_lock(message_queue_lock);
                     message = message_queue.front();
                     message_queue.pop();
                 }
 
-                handler.handle_message(message);
+                sequential_handle_message(message);
             }
             catch (std::exception &e)
             {
@@ -40,6 +44,20 @@ namespace mdl
             }
 
             is_processing.store(false);
+        }
+    }
+
+    void looper_base::stop()
+    {
+        is_running.store(false);
+    }
+
+    void looper_base::sequential_handle_message(message_ptr msg)
+    {
+        for (auto handler : handler_stack)
+        {
+            if (handler.get().handle_message(msg))
+                return;
         }
     }
 }

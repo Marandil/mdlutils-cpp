@@ -30,7 +30,13 @@ namespace mdl
          * @value Invalid argument value.
          * @converter to-string converter used to get textual representation of <value>
          */
-        template<typename Converter=std::function<std::string(const T &)>>
+        template<typename Converter=std::function<std::string(const T &)>,
+                class = typename std::enable_if<
+                        std::is_convertible<
+                                typename std::result_of<Converter(const T&)>::type,
+                                std::string>
+                        ::value>
+                ::type>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &customErrorMessage, const std::string &argName,
                                    const T &value, const Converter &converter = stringify<T>) :
@@ -46,7 +52,13 @@ namespace mdl
          * @value Invalid argument value.
          * @converter to-string converter used to get textual representation of <value>
          */
-        template<typename Converter=std::function<std::string(const T &)>>
+        template<typename Converter=std::function<std::string(const T &)>,
+                class = typename std::enable_if<
+                        std::is_convertible<
+                                typename std::result_of<Converter(const T&)>::type,
+                                std::string>
+                        ::value>
+                ::type>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &argName,
                                    const T &value, const Converter &converter = stringify<T>) :
