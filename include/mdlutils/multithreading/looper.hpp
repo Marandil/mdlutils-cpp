@@ -66,6 +66,21 @@ namespace mdl
             std::lock_guard<std::mutex> scope_lock(message_queue_lock);
             message_queue.push(std::make_shared<post_call>(runnable));
         }
+
+        template<typename T>
+        void post_delayed(std::function<T(void)> runnable, helper::duration_t duration)
+        {
+            std::lock_guard<std::mutex> scope_lock(message_queue_lock);
+            if (duration <= helper::duration_t::zero())
+                message_queue.push(std::make_shared<post_call>(runnable));
+            else
+                message_queue.push(
+                        std::make_shared<delayed_message>(
+                                std::make_shared<post_call>(runnable),
+                                helper::delay_by(duration)
+                        )
+                );
+        }
     };
 
     class looper_thread : public looper, public std::thread

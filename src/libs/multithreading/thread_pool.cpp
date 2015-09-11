@@ -6,24 +6,6 @@
 
 namespace mdl
 {
-    void thread_pool::thread_handler::handle_message(message_ptr msg)
-    {
-        auto msg_post = std::dynamic_pointer_cast<post_call>(msg);
-        if (msg_post)
-        {
-            try
-            {
-                // invoke the job
-                msg_post->function();
-                // after the job has been done
-            }
-            catch (const std::exception &e)
-            {
-                parent.register_exception(std::current_exception());
-            }
-        }
-    }
-
     void thread_pool::stop_and_join()
     {
         throw_if_nonempty();
@@ -36,7 +18,7 @@ namespace mdl
         }
     }
 
-    void thread_pool::register_exception(std::exception_ptr ptr)
+    void thread_pool::handle_exception(std::exception_ptr ptr)
     {
         std::lock_guard<std::mutex> scope_lock(exception_queue_lock);
         exception_queue.push(ptr);
