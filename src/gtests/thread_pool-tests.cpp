@@ -24,6 +24,12 @@ int add(int a, int b)
     return a + b;
 }
 
+template<int c>
+int addc(int a)
+{
+    return a + c;
+}
+
 void simple_add_test(mdl::thread_pool &pool)
 {
     int a = 10, b = 15;
@@ -68,12 +74,26 @@ TEST_F(ThreadPoolTest, SimpleAddDynamic)
 TEST_F(ThreadPoolTest, MultipleAddDynamic)
 {
     mdl::thread_pool pool(4, mdl::thread_pool::strategy::dynamic);
-    multiple_add_test<100>(pool);
+    multiple_add_test<1000>(pool);
+}
+
+template<size_t n, int c>
+void map_addc_test(mdl::thread_pool &pool)
+{
+    std::array<int, n> a, b;
+    pool.map(a.begin(), a.end(), b.begin(), addc<c>).get();
+    for (size_t i : mdl::range<size_t>(n))
+            EXPECT_EQ(a[i] + c, b[i]);
 }
 
 TEST_F(ThreadPoolTest, MapRoundRobin)
 {
+    mdl::thread_pool pool(4, mdl::thread_pool::strategy::round_robin);
+    map_addc_test<1000, 3>(pool);
+}
+
+TEST_F(ThreadPoolTest, MapDynamic)
+{
     mdl::thread_pool pool(4, mdl::thread_pool::strategy::dynamic);
-    std::array<int, 10> a, b;
-    pool.map(a.end(), a.begin(), b.begin());
+    map_addc_test<1000, 3>(pool);
 }

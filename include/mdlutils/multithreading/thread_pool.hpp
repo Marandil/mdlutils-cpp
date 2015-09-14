@@ -99,14 +99,34 @@ namespace mdl
             return promise->get_future();
         };
 
-        template<typename RandomAccessIterator>
-        std::future<bool> map(RandomAccessIterator first, RandomAccessIterator last, RandomAccessIterator output_first)
+        template<typename RandomAccessIteratorIn, typename RandomAccessIteratorOut, typename Fn>
+        std::future<bool> map(RandomAccessIteratorIn first, RandomAccessIteratorIn last, RandomAccessIteratorOut output_first, Fn function)
         {
+            typedef typename std::iterator_traits<RandomAccessIteratorIn>::value_type value_type;
+            typedef typename std::iterator_traits<RandomAccessIteratorOut>::value_type result_type;
+            typedef typename std::result_of<Fn(value_type)>::type function_result_type;
+
+            static_assert(std::is_convertible<function_result_type, result_type>::value, "Function return type not convertible to iterator value_type");
+
             // Count the distance between last and first:
             ptrdiff_t n = std::distance(first, last);
             if(n < 0) mdl_throw(make_ia_exception, "Invalid iterator range", "first, last", std::make_pair(first, last));
-
-            return std::async([]() { return true; });
+            // Create n async tasks for all elements in range:
+            auto futures = std::make_shared<const_vector<std::future<bool>>>(n);
+            for(size_t i = 0; first != last; ++first, ++output_first, ++i)
+            {
+                futures->at(i) = async([first, output_first, function] ()
+                    {
+                        *output_first = function(*first);
+                        return true;
+                    });
+            }
+            return std::async([futures]()
+                                  {
+                                      for(auto& job : (*futures))
+                                          job.get();
+                                      return true;
+                                  });
         }
     };
 }
