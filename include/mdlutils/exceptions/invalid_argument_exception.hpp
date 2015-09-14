@@ -30,7 +30,8 @@ namespace mdl
          * @value Invalid argument value.
          * @converter to-string converter used to get textual representation of <value>
          */
-        template<typename Converter=std::function<std::string(const T &)>>
+        template<typename Converter=std::function<std::string(const T &)>,
+                class = is_converter_t<Converter, T>>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &customErrorMessage, const std::string &argName,
                                    const T &value, const Converter &converter = stringify<T>) :
@@ -46,7 +47,8 @@ namespace mdl
          * @value Invalid argument value.
          * @converter to-string converter used to get textual representation of <value>
          */
-        template<typename Converter=std::function<std::string(const T &)>>
+        template<typename Converter=std::function<std::string(const T &)>,
+                class = is_converter_t<Converter, T>>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &argName,
                                    const T &value, const Converter &converter = stringify<T>) :
@@ -104,7 +106,8 @@ namespace mdl
      */
     template<typename T,
             typename Converter=std::function<std::string(const T &)>,
-            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type>
+            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type,
+            class = is_converter_t<Converter, T>>
     invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
                                                         const std::string &argName,
                                                         const T &value, const Converter &converter = stringify<T>)
@@ -125,7 +128,8 @@ namespace mdl
      */
     template<typename T,
             typename Converter=std::function<std::string(const T &)>,
-            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type>
+            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type,
+            class = is_converter_t<Converter, T>>
     invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
                                                         const std::string &customErrorMessage,
                                                         const std::string &argName,

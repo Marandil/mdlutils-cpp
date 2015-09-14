@@ -69,6 +69,12 @@ namespace mdl
             return "Element [" + mdl::type_name_s<T>() + "] @ 0x" + hexify(reinterpret_cast<size_t>(&value)) +
                    " of size (at least) " + std::to_string(sizeof(T));
         }
+
+        template<typename T, typename U>
+        std::string stringify_helper(const std::pair<T,U> &value)
+        {
+            return "std::pair of " + stringify(value.first) + " and " + stringify(value.second);
+        }
     }
 
     /* Method providing a simple way of converting any type to a textual representation.
@@ -101,6 +107,16 @@ namespace mdl
      */
     template<>
     inline std::string stringify<const char *>(const char *const &value) { return std::string(value); }
+
+    template<typename Converter, typename T>
+    using is_converter = typename std::enable_if<
+            std::is_convertible<
+                    typename std::result_of<Converter(const T&)>::type,
+                    std::string>
+            ::value>;
+
+    template<typename Converter, typename T>
+    using is_converter_t = typename is_converter<Converter, T>::type;
 }
 
 #endif //MDLUTILS_STRING_UTILS_HPP
