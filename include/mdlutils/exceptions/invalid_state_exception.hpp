@@ -26,12 +26,7 @@ public:
      * @converter to-string converter used to get textual representation of <value>
      */
     template<typename Converter=std::function<std::string(const T &)>,
-            class = typename std::enable_if<
-                    std::is_convertible<
-                            typename std::result_of<Converter(const T&)>::type,
-                            std::string>
-                    ::value>
-            ::type>
+            class = is_converter_t<Converter, T>>
     invalid_state_exception(const std::string &file, int line, const std::string &function,
                                const std::string &customErrorMessage,
                                const T &object, const Converter &converter = stringify<T>) :
@@ -47,12 +42,7 @@ public:
      * @converter to-string converter used to get textual representation of <value>
      */
     template<typename Converter=std::function<std::string(const T &)>,
-            class = typename std::enable_if<
-                    std::is_convertible<
-                            typename std::result_of<Converter(const T&)>::type,
-                            std::string>
-                    ::value>
-            ::type>
+            class = is_converter_t<Converter, T>>
     invalid_state_exception(const std::string &file, int line, const std::string &function,
                                const T &object, const Converter &converter = stringify<T>) :
             base_exception(file, line, function,

@@ -31,12 +31,7 @@ namespace mdl
          * @converter to-string converter used to get textual representation of <value>
          */
         template<typename Converter=std::function<std::string(const T &)>,
-                class = typename std::enable_if<
-                        std::is_convertible<
-                                typename std::result_of<Converter(const T&)>::type,
-                                std::string>
-                        ::value>
-                ::type>
+                class = is_converter_t<Converter, T>>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &customErrorMessage, const std::string &argName,
                                    const T &value, const Converter &converter = stringify<T>) :
@@ -53,12 +48,7 @@ namespace mdl
          * @converter to-string converter used to get textual representation of <value>
          */
         template<typename Converter=std::function<std::string(const T &)>,
-                class = typename std::enable_if<
-                        std::is_convertible<
-                                typename std::result_of<Converter(const T&)>::type,
-                                std::string>
-                        ::value>
-                ::type>
+                class = is_converter_t<Converter, T>>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &argName,
                                    const T &value, const Converter &converter = stringify<T>) :
@@ -116,7 +106,8 @@ namespace mdl
      */
     template<typename T,
             typename Converter=std::function<std::string(const T &)>,
-            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type>
+            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type,
+            class = is_converter_t<Converter, T>>
     invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
                                                         const std::string &argName,
                                                         const T &value, const Converter &converter = stringify<T>)
@@ -137,7 +128,8 @@ namespace mdl
      */
     template<typename T,
             typename Converter=std::function<std::string(const T &)>,
-            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type>
+            typename AutoT = typename mdl::helper::iae_type_by_type<T>::type,
+            class = is_converter_t<Converter, T>>
     invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
                                                         const std::string &customErrorMessage,
                                                         const std::string &argName,
