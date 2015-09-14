@@ -37,6 +37,7 @@ namespace mdl
         std::atomic_bool is_stopped{false};
 
         std::list<std::reference_wrapper<mdl::handler>> handler_stack;
+
         void sequential_handle_message(message_ptr);
 
         mdl::exception_handler *exception_handler;
@@ -48,7 +49,7 @@ namespace mdl
 
         template<typename Handler, typename... Handlers>
         typename std::enable_if<!std::is_same<Handler, mdl::exception_handler>::value>::type
-        unpack_handlers(Handler& handler, Handlers&... rest)
+        unpack_handlers(Handler &handler, Handlers &... rest)
         {
             handler_stack.push_front(handler);
             unpack_handlers(rest...);
@@ -56,20 +57,20 @@ namespace mdl
 
         template<typename Handler, typename... Handlers>
         typename std::enable_if<std::is_same<Handler, mdl::exception_handler>::value>::type
-        unpack_handlers(mdl::exception_handler& handler, Handlers&... rest)
+        unpack_handlers(Handler &handler, Handlers &... rest)
         {
             exception_handler = &handler;
             unpack_handlers(rest...);
         }
 
     public:
-        template <typename... Handlers>
-        looper_base(std::thread &looper_thread, Handlers&... handlers) :
+        template<typename... Handlers>
+        looper_base(std::thread &looper_thread, Handlers &... handlers) :
                 thread_ref(looper_thread),
                 thread_id(looper_thread.get_id()),
                 exception_handler(nullptr)
         {
-            unpack_handlers(static_cast<mdl::break_handler&>(*this), handlers...);
+            unpack_handlers(static_cast<mdl::break_handler &>(*this), handlers...);
         }
 
         virtual ~looper_base()
@@ -79,10 +80,17 @@ namespace mdl
         }
 
         void loop();
+
         void stop();
+
         void stop_safely();
+
         void stop_and_join();
+
         void stop_and_join_safely();
+
+        void wait_until_started();
+        void wait_until_finished();
 
         mdl::get_accessor<bool> running = {
                 [&]()
@@ -91,11 +99,17 @@ namespace mdl
                     },
         };
 
-
         mdl::get_accessor<bool> started = {
                 [&]()
                     {
                         return is_started.load();
+                    },
+        };
+
+        mdl::get_accessor<bool> stopped = {
+                [&]()
+                    {
+                        return is_stopped.load();
                     },
         };
 
@@ -109,11 +123,11 @@ namespace mdl
     class looper : public looper_base, protected delaying_handler, protected executor_handler
     {
     public:
-        template <typename... Handlers>
-        looper(std::thread &looper_thread, Handlers&... handlers) :
+        template<typename... Handlers>
+        looper(std::thread &looper_thread, Handlers &... handlers) :
                 delaying_handler(message_queue, message_queue_lock),
-                looper_base(looper_thread, static_cast<delaying_handler&>(*this), static_cast<executor_handler&>(*this), handlers...)
-        { }
+                looper_base(looper_thread, static_cast<delaying_handler &>(*this),
+                            static_cast<executor_handler &>(*this), handlers...) { }
 
         virtual ~looper()
         {
@@ -166,10 +180,11 @@ namespace mdl
     class looper_thread : public looper, public std::thread
     {
     public:
-        template <typename... Handlers>
-        looper_thread(Handlers&... handlers) :
-                looper(static_cast<std::thread&>(*this), handlers...),
-                std::thread([&](){loop();})
+        template<typename... Handlers>
+        looper_thread(Handlers &... handlers) :
+                looper(static_cast<std::thread &>(*this), handlers...),
+                std::thread([&]()
+                                { loop(); })
         {
             std::cout << "Created looper_thread" << std::endl;
         }
@@ -177,7 +192,7 @@ namespace mdl
         virtual ~looper_thread()
         {
             std::cout << "Destroying looper_thread" << std::endl;
-            if(running || !started)
+            if (running || !started)
                 stop_and_join();
         }
     };

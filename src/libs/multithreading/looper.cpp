@@ -68,10 +68,8 @@ namespace mdl
 
     void looper_base::stop()
     {
-        if (started)
-            is_running.store(false);
-        else
-            mdl_throw(invalid_state_exception<looper_base>, "Invoked stop() before started the process.", *this);
+        wait_until_started();
+        is_running.store(false);
     }
 
     void looper_base::stop_safely()
@@ -81,36 +79,16 @@ namespace mdl
 
     void looper_base::stop_and_join()
     {
-        if (started)
-        {
-            stop();
-            if (!is_stopped.load()) if (thread_ref.joinable())
-                thread_ref.join();
-            else
-                mdl_throw(invalid_state_exception<looper_base>, "Requested to join a detached thread.", *this);
-        }
-        else
-        {
-            while (!started) std::this_thread::yield();
-            stop_and_join();
-        }
+        wait_until_started();
+        stop();
+        wait_until_finished();
     }
 
     void looper_base::stop_and_join_safely()
     {
-        if (started)
-        {
-            stop_safely();
-            if (!is_stopped.load()) if (thread_ref.joinable())
-                thread_ref.join();
-            else
-                mdl_throw(invalid_state_exception<looper_base>, "Requested to join a detached thread.", *this);
-        }
-        else
-        {
-            while (!started) std::this_thread::yield();
-            stop_and_join();
-        }
+        wait_until_started();
+        stop_safely();
+        wait_until_finished();
     }
 
     void looper_base::sequential_handle_message(message_ptr msg)
@@ -120,5 +98,26 @@ namespace mdl
             if (handler.get().handle_message(msg))
                 return;
         }
+    }
+
+    void looper_base::wait_until_started()
+    {
+        std::cout << "Wait until started..." << std::endl;
+        while (!started)
+        {
+            std::this_thread::yield();
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }
+
+    void looper_base::wait_until_finished()
+    {
+        std::cout << "Wait until finished..." << std::endl;
+        while (!stopped)
+        {
+            std::this_thread::yield();
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+        if(thread_ref.joinable()) thread_ref.join();
     }
 }

@@ -22,8 +22,17 @@ namespace mdl
 
     bool delaying_handler::handle_message(message_ptr msg)
     {
-        // TODO: Implement this
-        mdl_throw(not_implemented_exception, "");
+        auto msg_delay = std::dynamic_pointer_cast<delayed_message>(msg);
+        if (msg_delay)
+        {
+            // If it's already after msg->delayed_until, push the content of the message
+            if(helper::is_after(msg_delay->delayed_until))
+                queue.push(msg_delay->content);
+            // Repush delayed message otherwise
+            else
+                queue.push(msg_delay);
+            return true;
+        }
         return false;
     }
 
