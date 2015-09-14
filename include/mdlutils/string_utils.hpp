@@ -31,6 +31,17 @@ namespace mdl
         return buffer.str();
     };
 
+    /* Method providing a simple way of converting any type to a textual representation.
+     * @value value to convert to string.
+     *
+     * Instantiate the template with a custom type, to provide a custom conversion method.
+     * By default, strings and char*s are just re-created as a string object, numeric types are converted to string via
+     * std::to_string method. The rest is represented as Element [(typename)] @ (address) of size (sizeof)
+     *
+     * @return textual representation of <value>
+     */
+    template<typename T> std::string stringify (const T& value);
+
     namespace helper
     {
         template<typename T>
@@ -70,22 +81,13 @@ namespace mdl
                    " of size (at least) " + std::to_string(sizeof(T));
         }
 
-        template<typename T, typename U>
-        std::string stringify_helper(const std::pair<T,U> &value)
+        template<typename T>
+        std::string stringify_helper(typename std::enable_if<is_specialization_of<std::pair, T>::value, const T &>::type value)
         {
-            return "std::pair of " + stringify(value.first) + " and " + stringify(value.second);
+            return "std::pair of " + mdl::stringify(value.first) + " and " + mdl::stringify(value.second);
         }
     }
 
-    /* Method providing a simple way of converting any type to a textual representation.
-     * @value value to convert to string.
-     *
-     * Instantiate the template with a custom type, to provide a custom conversion method.
-     * By default, strings and char*s are just re-created as a string object, numeric types are converted to string via
-     * std::to_string method. The rest is represented as Element [(typename)] @ (address) of size (sizeof)
-     *
-     * @return textual representation of <value>
-     */
     template<typename T>
     std::string stringify (const T& value)
     {

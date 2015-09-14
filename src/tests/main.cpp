@@ -9,7 +9,6 @@
 #include <mdlutils/algorithms.hpp>
 #include <mdlutils/timeit.hpp>
 
-#include <mdlutils/types/sorted_list.hpp>
 #include <mdlutils/types/const_vector.hpp>
 
 #include <mdlutils/multithreading/thread_pool.hpp>
@@ -260,6 +259,9 @@ int main()
         std::vector<int> v(10);
         std::cout << sizeof(c) << std::endl;
         std::cout << sizeof(v) << std::endl;
+    }
+    {
+        std::cout << mdl::stringify(std::make_pair(10, 20)) << std::endl;
     }
     return 0;
 }
