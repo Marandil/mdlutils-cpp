@@ -118,6 +118,14 @@ namespace mdl
             mutex_lock scope_lock(message_queue_lock);
             message_queue.push(msg);
         }
+
+        size_t count()
+        {
+            mutex_lock scope_lock(message_queue_lock);
+            return message_queue.size();
+        }
+
+        bool empty() { return !count(); }
     };
 
     class looper : public looper_base, protected delaying_handler, protected executor_handler
