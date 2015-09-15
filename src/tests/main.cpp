@@ -257,5 +257,11 @@ int main()
     {
         std::cout << mdl::stringify(std::make_pair(10, 20)) << std::endl;
     }
+    {
+        std::cout << mdl::stringify(std::make_pair(10, std::make_pair(20, 30))) << std::endl;
+    }
+    {
+        std::cout << mdl::stringify(std::make_tuple(10, 20, 30)) << std::endl;
+    }
     return 0;
 }
