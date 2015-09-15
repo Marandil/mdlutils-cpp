@@ -9,11 +9,11 @@
 #include <thread>
 #include <mutex>
 
+#include <mdlutils/typedefs.hpp>
+
 namespace mdl
 {
     typedef std::lock_guard<std::mutex> mutex_lock;
-    typedef std::chrono::high_resolution_clock::time_point time_point_t;
-    typedef std::chrono::high_resolution_clock::duration duration_t;
 
     namespace helper
     {
@@ -21,7 +21,6 @@ namespace mdl
         {
             return std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
         }
-
 
         time_point_t inline delay_by(duration_t duration)
         {
