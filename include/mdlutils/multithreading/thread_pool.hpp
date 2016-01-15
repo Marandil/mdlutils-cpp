@@ -145,7 +145,7 @@ namespace mdl
         async(Fn &&fn, Args &&... args)
         {
             std::shared_ptr<std::promise<T>> promise = std::make_shared<std::promise<T>>();
-            std::function<T(typename std::remove_reference<Args>::type...)> floc = fn;
+            auto floc = std::forward<Fn>(fn);
             auto lambda = [promise, floc, args...](void)
                 { promise->set_value(floc(std::move(args)...)); };
             send_message(std::make_shared<post_call>(lambda));
