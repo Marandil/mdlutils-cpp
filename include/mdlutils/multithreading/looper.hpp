@@ -179,9 +179,9 @@ namespace mdl
         // @inherit
         template<typename... Handlers>
         looper(std::thread &looper_thread, Handlers &... handlers) :
-                delaying_handler(message_queue, message_queue_lock),
                 looper_base(looper_thread, static_cast<delaying_handler &>(*this),
-                            static_cast<executor_handler &>(*this), handlers...) { }
+                            static_cast<executor_handler &>(*this), handlers...),
+                delaying_handler(message_queue, message_queue_lock) { }
 
         // @inherit
         virtual ~looper()
