@@ -26,7 +26,7 @@ namespace mdl
     struct post_call : public message
     {
         /* Create a post_call message for a given function. */
-        post_call(std::function<void(void)> function) : function(function) { }
+        post_call(std::function<void(void)> &&function) : function(std::move(function)) { }
 
         virtual ~post_call() { }
 
