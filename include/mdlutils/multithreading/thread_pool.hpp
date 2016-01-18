@@ -146,7 +146,8 @@ namespace mdl
         {
             std::shared_ptr<std::promise<T>> promise = std::make_shared<std::promise<T>>();
             std::function<T(typename std::remove_reference<Args>::type...)> floc = fn;
-            auto lambda = [promise, floc, args...](void)
+            //std::function<typename std::remove_reference<Fn>::type> floc = fn;
+            auto lambda = [promise, floc, args...](void) mutable
                 { promise->set_value(floc(std::move(args)...)); };
             send_message(std::make_shared<post_call>(lambda));
             return promise->get_future();
