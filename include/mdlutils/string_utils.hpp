@@ -29,7 +29,47 @@ namespace mdl
         std::stringstream buffer;
         buffer << std::hex << std::setfill('0') << std::setw(sizeof(T) * 2) << value;
         return buffer.str();
+    }
+    template <> inline
+    std::string hexify(unsigned char value)
+    {
+        std::stringstream buffer;
+        buffer << std::hex << std::setfill('0') << std::setw(2) << (uint16_t)(value);
+        return buffer.str();
     };
+    template <> inline
+    std::string hexify(char value)
+    {
+        return hexify(reinterpret_cast<unsigned char&>(value));
+    };
+    
+    /* Convert an array of integral type to it's hexadecimal representation
+     * @T An integral type
+     * @value Value to be converted
+     *
+     * @return std::string containing (aligned) hexadecimal representation of value
+     */
+    template <typename T, class = typename std::enable_if<std::is_integral<T>::value>::type>
+    std::string hexify(const T* value, size_t count)
+    {
+        std::stringstream buffer;
+        for(const T* end = value + count; value != end; ++value)
+            buffer << std::hex << std::setfill('0') << std::setw(sizeof(T) * 2) << (*value);
+        return buffer.str();
+    }
+    template <> inline
+    std::string hexify(const unsigned char* value, size_t count)
+    {
+        std::stringstream buffer;
+        for(const unsigned char* end = value + count; value != end; ++value)
+            buffer << std::hex << std::setfill('0') << std::setw(2) << (uint16_t)(*value);
+        return buffer.str();
+    }
+    template <> inline
+    std::string hexify(const char* value, size_t count)
+    {
+        return hexify(reinterpret_cast<const unsigned char*>(value), count);
+    }
 
 
     // Forward declaration
