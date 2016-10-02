@@ -9,7 +9,7 @@ namespace mdl
 {
     void looper_base::loop()
     {
-        std::cout << "Starting looper_base loop()" << std::endl;
+        //std::cout << "Starting looper_base loop()" << std::endl;
         if (running || started)
             mdl_throw(invalid_state_exception<decltype(*this)>, "Looper already running", *this);
 
@@ -17,7 +17,7 @@ namespace mdl
         is_started.store(true);
         is_stopped.store(false);
 
-        std::cout << "Loop marked as started and running" << std::endl;
+        //std::cout << "Loop marked as started and running" << std::endl;
 
         try
         {
@@ -102,7 +102,7 @@ namespace mdl
 
     void looper_base::wait_until_started()
     {
-        std::cout << "Wait until started..." << std::endl;
+        //std::cout << "Wait until started..." << std::endl;
         while (!started)
         {
             std::this_thread::yield();
@@ -112,7 +112,7 @@ namespace mdl
 
     void looper_base::wait_until_finished()
     {
-        std::cout << "Wait until finished..." << std::endl;
+        //std::cout << "Wait until finished..." << std::endl;
         while (!stopped)
         {
             std::this_thread::yield();

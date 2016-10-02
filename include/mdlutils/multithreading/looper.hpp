@@ -89,7 +89,7 @@ namespace mdl
          */
         virtual ~looper_base()
         {
-            std::cout << "Destroying looper_base" << std::endl;
+            //std::cout << "Destroying looper_base" << std::endl;
             stop_and_join();
         }
 
@@ -186,7 +186,7 @@ namespace mdl
         // @inherit
         virtual ~looper()
         {
-            std::cout << "Destroying looper" << std::endl;
+            //std::cout << "Destroying looper" << std::endl;
         }
 
         /* Put message msg wrapped in delayed_message, to be run at a timestamp equal to
@@ -274,13 +274,13 @@ namespace mdl
                 std::thread([&]()
                                 { loop(); })
         {
-            std::cout << "Created looper_thread" << std::endl;
+            //std::cout << "Created looper_thread" << std::endl;
         }
 
         // @inherit
         virtual ~looper_thread()
         {
-            std::cout << "Destroying looper_thread" << std::endl;
+            //std::cout << "Destroying looper_thread" << std::endl;
             if (running || !started)
                 stop_and_join();
         }
