@@ -196,6 +196,16 @@ namespace mdl
                                       return;
                                   });
         }
+        
+        /* Return the number of tasks awaiting in message queues.
+         * Can be used, when spawning large amounts of tasks, to pause the spawner process until the queue empties a little.
+         *
+         * @return number of awaiting tasks in case of strategy::dynamic.
+         */
+        size_t get_awaiting_tasks() const
+        {
+            return task_queue.size();
+        }
     };
 }
 
