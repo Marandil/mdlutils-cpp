@@ -33,7 +33,8 @@ namespace mdl
         std::thread::id thread_id;
         std::thread &thread_ref;
 
-        std::mutex message_queue_lock;
+        // variable declared mutable to allow const size checks
+        mutable std::mutex message_queue_lock;
         std::queue<message_ptr> message_queue;
 
         std::atomic_bool is_started{false};
@@ -155,7 +156,7 @@ namespace mdl
          *
          * @return Number of messages in the underlying message queue
          */
-        size_t count()
+        size_t count() const
         {
             mutex_lock scope_lock(message_queue_lock);
             return message_queue.size();

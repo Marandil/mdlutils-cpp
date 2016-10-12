@@ -77,6 +77,18 @@ TEST_F(ThreadPoolTest, MultipleAddDynamic)
     multiple_add_test<1000>(pool);
 }
 
+TEST_F(ThreadPoolTest, SimpleAddP2C)
+{
+    mdl::thread_pool pool(1, mdl::thread_pool::strategy::power2choices);
+    simple_add_test(pool);
+}
+
+TEST_F(ThreadPoolTest, MultipleAddP2C)
+{
+    mdl::thread_pool pool(4, mdl::thread_pool::strategy::power2choices);
+    multiple_add_test<1000>(pool);
+}
+
 template<size_t n, int c>
 void map_addc_test(mdl::thread_pool &pool)
 {
@@ -95,5 +107,11 @@ TEST_F(ThreadPoolTest, MapRoundRobin)
 TEST_F(ThreadPoolTest, MapDynamic)
 {
     mdl::thread_pool pool(4, mdl::thread_pool::strategy::dynamic);
+    map_addc_test<1000, 3>(pool);
+}
+
+TEST_F(ThreadPoolTest, MapP2C)
+{
+    mdl::thread_pool pool(4, mdl::thread_pool::strategy::power2choices);
     map_addc_test<1000, 3>(pool);
 }

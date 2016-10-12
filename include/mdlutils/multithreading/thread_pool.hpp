@@ -10,6 +10,7 @@
 #include <thread>
 #include <atomic>
 #include <future>
+#include <random>
 #include <vector>
 #include <exception>
 #include <functional>
@@ -50,7 +51,13 @@ namespace mdl
              * in which some tasks have long task queues, while others are idle, as the tasks are
              * assigned one-at-a-time.
              */
-            dynamic
+            dynamic,
+            /* In this strategy, <thread_pool> assigns the work as it comes, using "Power of
+             * two choices" strategy. Whenever a new task is created, two workers are selected
+             * at random. <thread_pool> selects the one with a shorter message queue and queues
+             * the new task.
+             */
+            power2choices
         };
 
     protected:
@@ -92,6 +99,9 @@ namespace mdl
         std::mutex task_queue_lock;
         // Queue of messages to be assigned to workers in case of dynamic task assignment.
         std::queue<message_ptr> task_queue;
+        
+        // Random number generation engine for task assignment using power2choices <strategy>
+        std::default_random_engine p2c_rng;
 
 
         void throw_if_nonempty();
@@ -113,7 +123,8 @@ namespace mdl
                 processes(processes),
                 task_assigning_strategy(task_assigning_strategy),
                 pool(pool_type::make_indexed(processes, *this)),
-                next_robin(pool.begin())
+                next_robin(pool.begin()),
+                p2c_rng(std::chrono::system_clock::now().time_since_epoch().count())
         {
             initialize_queues();
         }
@@ -179,6 +190,7 @@ namespace mdl
             // Count the distance between last and first:
             ptrdiff_t n = std::distance(first, last);
             if(n < 0) mdl_throw(make_ia_exception, "Invalid iterator range", "first, last", std::make_pair(first, last));
+            
             // Create n async tasks for all elements in range:
             auto futures = std::make_shared<const_vector<std::future<bool>>>(n);
             for(size_t i = 0; first != last; ++first, ++output_first, ++i)
@@ -189,6 +201,8 @@ namespace mdl
                         return true;
                     });
             }
+            
+            // Return an async task that collects all the jobs and returns one they are done.
             return std::async([futures]()
                                   {
                                       for(auto& job : (*futures))
@@ -202,10 +216,7 @@ namespace mdl
          *
          * @return number of awaiting tasks in case of strategy::dynamic.
          */
-        size_t get_awaiting_tasks() const
-        {
-            return task_queue.size();
-        }
+        size_t get_awaiting_tasks() const;
     };
 }
 
