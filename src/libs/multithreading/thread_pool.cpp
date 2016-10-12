@@ -4,6 +4,7 @@
 
 #include <mdlutils/multithreading/thread_pool.hpp>
 #include <mdlutils/types/range.hpp>
+#include <cassert>
 
 namespace mdl
 {
@@ -75,6 +76,20 @@ namespace mdl
                 if (next_robin == pool.end()) next_robin = pool.begin();
                 break;
             };
+            case strategy::power2choices:
+            {
+                // select two workers at random
+                size_t index_0 = p2c_rng() % processes;
+                size_t index_1 = p2c_rng() % processes;
+                assert(index_0 >= 0);
+                assert(index_1 >= 0);
+                // select the one with a smaller message queue
+                size_t queue_0 = pool[index_0].count();
+                size_t queue_1 = pool[index_1].count();
+                // assign the work to the correct worker
+                pool[(queue_0 < queue_1) ? index_0 : index_1].send_message(msg);
+                break;
+            };
         }
     }
 
@@ -114,5 +129,18 @@ namespace mdl
         // TODO: (2) add another exception like rethrown_exception and throw it instead.
         std::rethrow_exception(e);
     }
-
+    
+    size_t thread_pool::get_awaiting_tasks() const
+    {
+        switch (task_assigning_strategy)
+        {
+            case strategy::dynamic:
+                return task_queue.size();
+            default:
+                size_t tasks = 0;
+                for (const auto &thread : pool)
+                    tasks += thread.count();
+                return task_queue.size() + tasks;
+        }
+    }
 }
