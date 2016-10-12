@@ -34,7 +34,7 @@ namespace mdl
                 class = is_converter_t<Converter, T>>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &customErrorMessage, const std::string &argName,
-                                   const T &value, const Converter &converter = stringify<T>) :
+                                   const T &value, Converter converter = stringify<T>) :
                 base_exception(file, line, function,
                                customErrorMessage + " (argument " + argName + " with value " + converter(value) + ")"),
                 value(value) {}
@@ -51,7 +51,7 @@ namespace mdl
                 class = is_converter_t<Converter, T>>
         invalid_argument_exception(const std::string &file, int line, const std::string &function,
                                    const std::string &argName,
-                                   const T &value, const Converter &converter = stringify<T>) :
+                                   const T &value, Converter converter = stringify<T>) :
                 base_exception(file, line, function,
                                "Argument " + argName + " with value " + converter(value)),
                 value(value) {}
@@ -110,7 +110,7 @@ namespace mdl
             class = is_converter_t<Converter, T>>
     invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
                                                         const std::string &argName,
-                                                        const T &value, const Converter &converter = stringify<T>)
+                                                        const T &value, Converter converter = stringify<T>)
     {
         return invalid_argument_exception<AutoT>(file, line, function, argName, value, converter);
     };
@@ -133,7 +133,7 @@ namespace mdl
     invalid_argument_exception<AutoT> make_ia_exception(const std::string &file, int line, const std::string &function,
                                                         const std::string &customErrorMessage,
                                                         const std::string &argName,
-                                                        const T &value, const Converter &converter = stringify<T>)
+                                                        const T &value, Converter converter = stringify<T>)
     {
         return invalid_argument_exception<AutoT>(file, line, function, customErrorMessage, argName, value, converter);
     };

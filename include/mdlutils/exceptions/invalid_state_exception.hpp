@@ -29,7 +29,7 @@ namespace mdl
                 class = is_converter_t<Converter, T>>
         invalid_state_exception(const std::string &file, int line, const std::string &function,
                                 const std::string &customErrorMessage,
-                                const T &object, const Converter &converter = stringify<T>) :
+                                const T &object, Converter converter = stringify<T>) :
                 base_exception(file, line, function,
                                customErrorMessage + " (object of type " + type_name_s<T>() + " with value " +
                                converter(object) + ")"),
@@ -45,7 +45,7 @@ namespace mdl
         template<typename Converter = std::string(&)(const T &),
                 class = is_converter_t<Converter, T>>
         invalid_state_exception(const std::string &file, int line, const std::string &function,
-                                const T &object, const Converter &converter = stringify<T>) :
+                                const T &object, Converter converter = stringify<T>) :
                 base_exception(file, line, function,
                                "Object of type " + type_name_s<T>() + " with value " + converter(object)),
                 object(object) {}
