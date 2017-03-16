@@ -29,7 +29,7 @@ namespace mdl
         post_call(std::function<void(void)> &&function) : function(std::move(function)) { }
 
         virtual ~post_call() { }
-
+    
         // The function carried along with the message.
         std::function<void(void)> function;
     };

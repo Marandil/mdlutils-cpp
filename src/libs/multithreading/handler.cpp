@@ -15,6 +15,8 @@ namespace mdl
         {
             // invoke the function
             msg_post->function();
+            msg_post->function = nullptr;
+            msg_post = nullptr;
             return true;
         }
         return false;

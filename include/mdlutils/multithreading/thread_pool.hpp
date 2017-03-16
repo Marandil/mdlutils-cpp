@@ -158,8 +158,7 @@ namespace mdl
             std::shared_ptr<std::promise<T>> promise = std::make_shared<std::promise<T>>();
             //auto floc = std::forward<Fn>(fn);
             auto floc = std::bind<T, Fn, Args...>(std::forward<Fn>(fn), std::forward<Args>(args)...);
-            auto lambda = [promise, floc, args...](void) mutable
-            //    { promise->set_value(floc(std::move(args)...)); };
+            auto lambda = [promise, floc](void) mutable
                 { promise->set_value(floc()); };
             send_message(std::make_shared<post_call>(lambda));
             return promise->get_future();
