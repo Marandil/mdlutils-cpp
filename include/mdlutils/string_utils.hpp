@@ -29,7 +29,52 @@ namespace mdl
         std::stringstream buffer;
         buffer << std::hex << std::setfill('0') << std::setw(sizeof(T) * 2) << value;
         return buffer.str();
+    }
+    template <> inline
+    std::string hexify(unsigned char value)
+    {
+        std::stringstream buffer;
+        buffer << std::hex << std::setfill('0') << std::setw(2) << (uint16_t)(value);
+        return buffer.str();
     };
+    template <> inline
+    std::string hexify(char value)
+    {
+        return hexify(reinterpret_cast<unsigned char&>(value));
+    };
+    
+    /* Convert an array of integral type to it's hexadecimal representation
+     * @T An integral type
+     * @value Value to be converted
+     *
+     * @return std::string containing (aligned) hexadecimal representation of value
+     */
+    template <typename T, class = typename std::enable_if<std::is_integral<T>::value>::type>
+    std::string hexify(const T* value, size_t count)
+    {
+        std::stringstream buffer;
+        for(const T* end = value + count; value != end; ++value)
+            buffer << std::hex << std::setfill('0') << std::setw(sizeof(T) * 2) << (*value);
+        return buffer.str();
+    }
+    template <> inline
+    std::string hexify(const unsigned char* value, size_t count)
+    {
+        std::stringstream buffer;
+        for(const unsigned char* end = value + count; value != end; ++value)
+            buffer << std::hex << std::setfill('0') << std::setw(2) << (uint16_t)(*value);
+        return buffer.str();
+    }
+    template <> inline
+    std::string hexify(const char* value, size_t count)
+    {
+        return hexify(reinterpret_cast<const unsigned char*>(value), count);
+    }
+
+
+    // Forward declaration
+    template<typename T>
+    std::string stringify (const T& value);
 
     namespace helper
     {
@@ -61,6 +106,40 @@ namespace mdl
         std::string stringify_helper(typename std::enable_if<mdl::is_specialization_of<std::function, T>::value, const T &>::type value)
         {
             return stringify_function(value);
+        }
+
+        /* Instantiation of <stringify> for std::pair
+         * @value std::pair to convert to string.
+         *
+         * @return stringify(value.first) + " and " + stringify(value.last)
+         */
+        template<typename T>
+        std::string stringify_helper(typename std::enable_if<mdl::is_specialization_of<std::pair, T>::value, const T &>::type value)
+        {
+            return "std::pair of " + mdl::stringify(value.first) + " and " + mdl::stringify(value.second);
+        }
+
+        template <typename Tuple, size_t index>
+        std::string stringify_tuple(typename std::enable_if<!index, const Tuple&>::type value)
+        {
+            return stringify(std::get<index>(value));
+        }
+
+        template <typename Tuple, size_t index>
+        std::string stringify_tuple(typename std::enable_if<!!index, const Tuple&>::type value)
+        {
+            return stringify_tuple<Tuple, index - 1>(value) + ", " + stringify(std::get<index>(value));
+        }
+
+        /* Instantiation of <stringify> for std::tuple
+         * @value std::pair to convert to string.
+         *
+         * @return stringify(value.first) + " and " + stringify(value.last)
+         */
+        template<typename T>
+        std::string stringify_helper(typename std::enable_if<mdl::is_specialization_of<std::tuple, T>::value, const T &>::type value)
+        {
+            return "std::tuple of (" + stringify_tuple<T, std::tuple_size<T>::value - 1>(value) + ")";
         }
 
         template<typename T>
@@ -101,6 +180,16 @@ namespace mdl
      */
     template<>
     inline std::string stringify<const char *>(const char *const &value) { return std::string(value); }
+
+    template<typename Converter, typename T>
+    using is_converter = typename std::enable_if<
+            std::is_convertible<
+                    typename std::result_of<Converter(const T&)>::type,
+                    std::string>
+            ::value>;
+
+    template<typename Converter, typename T>
+    using is_converter_t = typename is_converter<Converter, T>::type;
 }
 
 #endif //MDLUTILS_STRING_UTILS_HPP

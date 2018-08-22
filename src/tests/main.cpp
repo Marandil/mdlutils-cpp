@@ -9,8 +9,9 @@
 #include <mdlutils/algorithms.hpp>
 #include <mdlutils/timeit.hpp>
 
-#include <mdlutils/types/sorted_list.hpp>
 #include <mdlutils/types/const_vector.hpp>
+
+#include <mdlutils/multithreading/thread_pool.hpp>
 
 std::vector<int> topofn_test_data;
 
@@ -250,10 +251,23 @@ int main()
         std::cout << e.what() << std::endl;
     }
     {
+        mdl::thread_pool workers;
+        std::cout << "Created a thread_pool with " << workers.workers << " workers" << std::endl;
+    }
+    {
         mdl::const_vector<int> c(10);
         std::vector<int> v(10);
         std::cout << sizeof(c) << std::endl;
         std::cout << sizeof(v) << std::endl;
+    }
+    {
+        std::cout << mdl::stringify(std::make_pair(10, 20)) << std::endl;
+    }
+    {
+        std::cout << mdl::stringify(std::make_pair(10, std::make_pair(20, 30))) << std::endl;
+    }
+    {
+        std::cout << mdl::stringify(std::make_tuple(10, 20, 30)) << std::endl;
     }
     return 0;
 }
