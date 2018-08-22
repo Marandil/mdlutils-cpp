@@ -262,7 +262,7 @@ namespace mdl
          * @return New object of type const_vector, ready to move-construct. Note, that copy constructor is unavailable.
          */
         template<typename... Args>
-        static const_vector<T, Alloc> make_indexed(size_t size, const Args&... args)
+        static const_vector<T, Alloc> make_indexed(size_t size, Args&... args)
         {
             const_vector<T, Alloc> result(size, nullptr);
             while (size--)

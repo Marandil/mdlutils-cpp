@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 project(mdlutils_cpp)
 
+find_package(Threads REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Google test
@@ -12,6 +13,9 @@ include_directories(include)
 set(LIB_SOURCE_FILES
         src/libs/timeit.cpp
         src/libs/bounce_manager.cpp
+        src/libs/multithreading/thread_pool.cpp
+        src/libs/multithreading/looper.cpp
+        src/libs/multithreading/handler.cpp
 )
 
 set(TEST_SOURCE_FILES
@@ -27,9 +31,12 @@ set(GTEST_SOURCE_FILES
         src/gtests/getset_accessor-tests.cpp
         src/gtests/range-tests.cpp
         src/gtests/const_vector-tests.cpp
-)
+        src/gtests/looper-tests.cpp
+        src/gtests/handler-tests.cpp
+        src/gtests/thread_pool-tests.cpp)
 
 add_library(mdlutils ${LIB_SOURCE_FILES})
+target_link_libraries(mdlutils ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(simple_tests ${TEST_SOURCE_FILES})
 add_executable(google_tests ${GTEST_SOURCE_FILES})
